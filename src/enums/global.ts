@@ -10,6 +10,7 @@ export enum PathFor {
   guidedBuildPathPage = '/path',
   coachingPracticePage = '/path/practice',
   reAssessmentIntroPage = '/reassessment/intro',
+  companiesWantYouPage = '/placement/interest',
   statusTrackerPage = '/placement/status',
   loginPage = '/login',
 }
