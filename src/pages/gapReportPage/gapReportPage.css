@@ -469,6 +469,7 @@
 
 .gr-bgtag-miss { background: var(--gr-danger); color: #fff; }
 .gr-bgtag-win  { background: var(--gr-success); color: #fff; }
+.gr-bgtag-warn { background: var(--gr-warning-bg); color: var(--gr-warning-text); }
 
 /* ── Details / collapsible ── */
 .gr-rest {

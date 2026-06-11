@@ -6,6 +6,7 @@ import { getTier } from './gapReportPageComponents/gapReportPageData';
 import './gapReportPage.css';
 
 const SCORE_KEY = 'np-gap-score';
+const SCENARIO_KEY = 'np-gap-scenario';
 
 const GapReportPage: FC = () => {
   const navigate = useNavigate();
@@ -16,7 +17,9 @@ const GapReportPage: FC = () => {
     return raw && !isNaN(n) ? n : 78;
   }, []);
 
-  const tier = getTier(score);
+  const scenario = useMemo(() => localStorage.getItem(SCENARIO_KEY), []);
+
+  const tier = getTier(score, scenario);
 
   return (
     <GapReportPageJSX

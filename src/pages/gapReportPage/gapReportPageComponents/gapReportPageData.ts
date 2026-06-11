@@ -6,9 +6,10 @@ export const GAP_CONFIG = {
   clientName: 'Raipur Tiffin Co.',
 } as const;
 
-export type ScoreTier = 'low' | 'scholarship' | 'pass';
+export type ScoreTier = 'low' | 'scholarship' | 'pass' | 'capped_by_late';
 
-export function getTier(score: number): ScoreTier {
+export function getTier(score: number, scenario?: string | null): ScoreTier {
+  if (scenario === 'capped_by_late') return 'capped_by_late';
   if (score >= GAP_CONFIG.passMark) return 'pass';
   if (score >= GAP_CONFIG.scholarshipFloor) return 'scholarship';
   return 'low';
@@ -68,21 +69,23 @@ export const BREAKDOWN_NOT_PASS: BreakdownData = {
 export const BREAKDOWN_PASS: BreakdownData = {
   metCount: 7,
   totalCount: 8,
-  segments: ['met', 'met', 'met', 'met', 'met', 'met', 'met', 'partial'],
+  segments: [‘met’, ‘met’, ‘met’, ‘met’, ‘met’, ‘met’, ‘met’, ‘partial’],
   reqs: [
-    { name: '9 PM daily order cutoff', why: 'Orders close at 9 PM so the kitchen can shop and prep—exactly what they needed.', status: 'met' },
-    { name: 'Browse the daily menu & place orders', why: 'Menu loads, refreshes daily, and the date picker and cart complete cleanly.', status: 'met' },
-    { name: 'Owner can edit the daily menu', why: 'Add, edit and remove items all work for the owner.', status: 'met' },
-    { name: 'Cash-on-delivery & order confirmation', why: 'COD flow confirms, records the order, and shows a clear order number.', status: 'met' },
-    { name: 'Re-order from past orders', why: "History shows and the button’s wired. Just needs a confirmation step, a small polish.", status: 'partial' },
+    { name: ‘9 PM daily order cutoff’, why: ‘Orders close at 9 PM so the kitchen can shop and prep—exactly what they needed.’, status: ‘met’ },
+    { name: ‘Browse the daily menu & place orders’, why: ‘Menu loads, refreshes daily, and the date picker and cart complete cleanly.’, status: ‘met’ },
+    { name: ‘Owner can edit the daily menu’, why: ‘Add, edit and remove items all work for the owner.’, status: ‘met’ },
+    { name: ‘Cash-on-delivery & order confirmation’, why: ‘COD flow confirms, records the order, and shows a clear order number.’, status: ‘met’ },
+    { name: ‘Re-order from past orders’, why: "History shows and the button’s wired. Just needs a confirmation step, a small polish.", status: ‘partial’ },
   ],
   reqNotes: [
-    { kind: 'pos', bold: 'You found the business model.', text: 'You asked how the client makes money and caught that subscriptions are the heart of it.' },
-    { kind: 'pos', bold: 'You nailed the timing.', text: 'Order cutoff and delivery areas came up early, so nothing was a surprise.' },
+    { kind: ‘pos’, bold: ‘You found the business model.’, text: ‘You asked how the client makes money and caught that subscriptions are the heart of it.’ },
+    { kind: ‘pos’, bold: ‘You nailed the timing.’, text: ‘Order cutoff and delivery areas came up early, so nothing was a surprise.’ },
   ],
   commNotes: [
-    { kind: 'pos', bold: 'Clear and professional.', text: 'You explained your choices in plain language the client followed.' },
-    { kind: 'pos', bold: 'Kept the client posted.', text: 'Steady updates meant they always knew where things stood.' },
+    { kind: ‘pos’, bold: ‘Clear and professional.’, text: ‘You explained your choices in plain language the client followed.’ },
+    { kind: ‘pos’, bold: ‘Kept the client posted.’, text: ‘Steady updates meant they always knew where things stood.’ },
   ],
   deliveryLate: false,
 };
+
+export const BREAKDOWN_CAPPED_BY_LATE: BreakdownData = BREAKDOWN_PASS;

@@ -3,6 +3,7 @@ import {
   GAP_CONFIG,
   BREAKDOWN_NOT_PASS,
   BREAKDOWN_PASS,
+  BREAKDOWN_CAPPED_BY_LATE,
   ScoreTier,
   Req,
   Note,
@@ -48,8 +49,8 @@ const MedalIcon = () => (
   </svg>
 );
 
-const ClockIcon = () => (
-  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
+const ClockIcon = ({ size = 17 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="9" />
     <path d="M12 7v5l3 2" />
   </svg>
@@ -130,15 +131,22 @@ const AppBar = ({ onBack }: { onBack: () => void }) => (
 const ScoreCard = ({ score, tier }: { score: number; tier: ScoreTier }) => {
   const isPass = tier === 'pass';
   const isSchol = tier === 'scholarship';
+  const isLate = tier === 'capped_by_late';
 
-  const verdictText = isPass ? 'Passed' : isSchol ? 'Almost there' : 'Not there yet';
-  const pillClass = `gr-pill ${isPass ? 'gr-pill-good' : 'gr-pill-warn'}`;
+  let verdictText: string;
+  let pillClass: string;
+  if (isPass) { verdictText = 'Passed'; pillClass = 'gr-pill gr-pill-good'; }
+  else if (isLate) { verdictText = 'Delivered late'; pillClass = 'gr-pill gr-pill-warn'; }
+  else { verdictText = isSchol ? 'Almost there' : 'Not there yet'; pillClass = 'gr-pill gr-pill-warn'; }
 
   let h1: string;
   let body: string;
   if (isPass) {
     h1 = 'You passed!';
     body = 'You cleared the placement line — a strong, well-rounded build. You're ready for the pool.';
+  } else if (isLate) {
+    h1 = 'Great build. Late delivery.';
+    body = `You scored above the bar, but it came in past the deadline. The client moved on. Your path is ${GAP_CONFIG.scholarshipPct}% off. Pass the re-assessment on time and you're in.`;
   } else if (isSchol) {
     h1 = 'Almost there';
     body = `Three fixable gaps stand between you and the pool. None are about talent. You scored ${score}, so your path is ${GAP_CONFIG.scholarshipPct}% off.`;
@@ -170,7 +178,7 @@ const ScoreCard = ({ score, tier }: { score: number; tier: ScoreTier }) => {
           }}
         />
         <div
-          className={`gr-track-fill${isPass ? ' gr-fill-ok' : ''}`}
+          className={`gr-track-fill${(isPass || isLate) ? ' gr-fill-ok' : ''}`}
           style={{ width: `${Math.max(4, score)}%` }}
         />
         <div className="gr-track-tick" style={{ left: `${GAP_CONFIG.passMark}%` }}>
@@ -200,21 +208,24 @@ const ScoreCard = ({ score, tier }: { score: number; tier: ScoreTier }) => {
 
 /* ── Biggest gap / strongest work card ── */
 const BigGapCard = ({ tier }: { tier: ScoreTier }) => {
-  const isPass = tier === 'pass';
+  const isPass = tier === ‘pass’;
+  const isLate = tier === ‘capped_by_late’;
+  const isWin = isPass || isLate;
+
   return (
-    <section className={`gr-card gr-biggap${isPass ? ' gr-biggap-win' : ''}`}>
-      <span className={`gr-eyebrow ${isPass ? 'gr-eyebrow-ok' : 'gr-eyebrow-danger'}`}>
-        {isPass ? 'Your strongest work' : 'Your biggest gap'}
+    <section className={`gr-card gr-biggap${isWin ? ‘ gr-biggap-win’ : ‘’}`}>
+      <span className={`gr-eyebrow ${isWin ? ‘gr-eyebrow-ok’ : ‘gr-eyebrow-danger’}`}>
+        {isWin ? ‘Your strongest work’ : ‘Your biggest gap’}
       </span>
       <div className="gr-bgname">Weekly &amp; monthly subscriptions</div>
       <p className="gr-bgwhy">
-        {isPass
+        {isWin
           ? "The client’s main ask, and you nailed it. Recurring plans, pause and resume all work end to end."
           : "The client’s main ask — and recurring plans are the heart of a tiffin business. You built one-time orders only."}
       </p>
-      <span className={`gr-bgtag ${isPass ? 'gr-bgtag-win' : 'gr-bgtag-miss'}`}>
-        {isPass ? <CheckIcon size={12} /> : <XIcon size={11} />}
-        <span>{isPass ? 'Nailed it' : 'Missing'}</span>
+      <span className={`gr-bgtag ${isWin ? ‘gr-bgtag-win’ : ‘gr-bgtag-miss’}`}>
+        {isWin ? <CheckIcon size={12} /> : <XIcon size={11} />}
+        <span>{isWin ? ‘Nailed it’ : ‘Missing’}</span>
       </span>
     </section>
   );
@@ -274,7 +285,10 @@ const NoteRow = ({ note }: { note: Note }) => {
 /* ── Breakdown (collapsible) ── */
 const BreakdownSection = ({ tier }: { tier: ScoreTier }) => {
   const isPass = tier === 'pass';
-  const data: BreakdownData = isPass ? BREAKDOWN_PASS : BREAKDOWN_NOT_PASS;
+  const data: BreakdownData =
+    tier === 'capped_by_late' ? BREAKDOWN_CAPPED_BY_LATE :
+    isPass ? BREAKDOWN_PASS :
+    BREAKDOWN_NOT_PASS;
 
   const counts = {
     met: data.segments.filter(s => s === 'met').length,
@@ -354,8 +368,10 @@ const ActionCard = ({
 }) => {
   const isPass = tier === 'pass';
   const isSchol = tier === 'scholarship';
+  const isLate = tier === 'capped_by_late';
   const fullPrice = GAP_CONFIG.pathPrice;
-  const price = isSchol ? Math.round(fullPrice * (1 - GAP_CONFIG.scholarshipPct / 100)) : fullPrice;
+  const discountedPrice = Math.round(fullPrice * (1 - GAP_CONFIG.scholarshipPct / 100));
+  const price = (isSchol || isLate) ? discountedPrice : fullPrice;
   const fmt = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 
   if (isPass) {
@@ -370,6 +386,28 @@ const ActionCard = ({
           Join the pool <ArrowRightIcon />
         </button>
         <p className="gr-reassure">We'll text and email you the moment a company picks you.</p>
+      </section>
+    );
+  }
+
+  if (isLate) {
+    return (
+      <section className="gr-card gr-actioncard">
+        <span className="gr-aeye">Your next step</span>
+        <div className="gr-ahead">Re-assess on time</div>
+        <p className="gr-asub">
+          You've got the skill. The guided path gives you a fresh client and a re-assessment. Deliver on time and you're in.
+        </p>
+        <div className="gr-priceline">
+          <span className="gr-price-amt">{fmt(price)}</span>
+          <span className="gr-price-was">{fmt(fullPrice)}</span>
+          <span className="gr-price-per">one-time · includes the re-assessment</span>
+          <span className="gr-savetag">{GAP_CONFIG.scholarshipPct}% off</span>
+        </div>
+        <button className="gr-cta" onClick={onStartPath}>
+          Start my path <ArrowRightIcon />
+        </button>
+        <p className="gr-reassure">No subscription. Pay once, keep the path for good.</p>
       </section>
     );
   }
