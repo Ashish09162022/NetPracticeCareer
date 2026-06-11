@@ -7,6 +7,15 @@ import CompaniesWantYouPage from '@/pages/companiesWantYouPage/companiesWantYouP
 import StatusTrackerPage from '@/pages/statusTrackerPage/statusTrackerPage';
 import PaywallPage from '@/pages/paywallPage/paywallPage';
 import GapReportPage from '@/pages/gapReportPage/gapReportPage';
+import MarkAvailablePage from '@/pages/markAvailablePage/markAvailablePage';
+import AdminReviewQueuePage from '@/pages/adminReviewQueuePage/adminReviewQueuePage';
+import CoachingPracticePage from '@/pages/coachingPracticePage/coachingPracticePage';
+import GuidedBuildPathPage from '@/pages/guidedBuildPathPage/guidedBuildPathPage';
+import ReAssessmentIntroPage from '@/pages/reAssessmentIntroPage/reAssessmentIntroPage';
+import LoginPage from '@/pages/loginPage/loginPage';
+import GradingPage from '@/pages/gradingPage/gradingPage';
+import BuildSubmissionPage from '@/pages/buildSubmissionPage/buildSubmissionPage';
+import ClientConversationPage from '@/pages/clientConversationPage/clientConversationPage';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +45,42 @@ const router = createBrowserRouter([
   {
     path: PathFor.gapReportPage,
     element: <GapReportPage />,
+  },
+  {
+    path: PathFor.markAvailablePage,
+    element: <MarkAvailablePage />,
+  },
+  {
+    path: PathFor.adminReviewQueuePage,
+    element: <AdminReviewQueuePage />,
+  },
+  {
+    path: PathFor.guidedBuildPathPage,
+    element: <GuidedBuildPathPage />,
+  },
+  {
+    path: PathFor.coachingPracticePage,
+    element: <CoachingPracticePage />,
+  },
+  {
+    path: PathFor.reAssessmentIntroPage,
+    element: <ReAssessmentIntroPage />,
+  },
+  {
+    path: PathFor.loginPage,
+    element: <LoginPage />,
+  },
+  {
+    path: PathFor.gradingPage,
+    element: <GradingPage />,
+  },
+  {
+    path: PathFor.buildSubmissionPage,
+    element: <BuildSubmissionPage />,
+  },
+  {
+    path: PathFor.clientConversationPage,
+    element: <ClientConversationPage />,
   },
 ]);
 

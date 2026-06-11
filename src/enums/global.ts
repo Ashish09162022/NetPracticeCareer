@@ -13,6 +13,8 @@ export enum PathFor {
   companiesWantYouPage = '/placement/interest',
   statusTrackerPage = '/placement/status',
   loginPage = '/login',
+  markAvailablePage = '/availability',
+  adminReviewQueuePage = '/admin/review',
 }
 
 export enum StudentStateKey {
