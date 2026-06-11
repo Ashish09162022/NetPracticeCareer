@@ -125,7 +125,7 @@ const AssessmentIntroPageJSX: FC<AssessmentIntroPageJSXProps> = ({ onCTAClick, o
                     <line x1="12" y1="7.6" x2="12" y2="7.7" />
                   </svg>
                 </span>
-                <h4>Two rules</h4>
+                <h4>Three rules</h4>
               </div>
 
               <div className="ai-rule">
@@ -153,6 +153,19 @@ const AssessmentIntroPageJSX: FC<AssessmentIntroPageJSXProps> = ({ onCTAClick, o
                 </span>
                 <span className="ai-rule-text">
                   The client sets a deadline. Deliver on time. Late work shows in your result.
+                </span>
+              </div>
+
+              <div className="ai-rule">
+                <span className="ai-rule-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M8 2v3M16 2v3" />
+                    <rect x="3" y="4.5" width="18" height="17" rx="2.5" />
+                    <line x1="3" y1="9.5" x2="21" y2="9.5" />
+                  </svg>
+                </span>
+                <span className="ai-rule-text">
+                  The client chat happens in one sitting. If you leave, the client moves on. You'll build with what you've learned.
                 </span>
               </div>
             </div>
