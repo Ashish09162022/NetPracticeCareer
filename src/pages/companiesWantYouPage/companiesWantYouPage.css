@@ -13,30 +13,6 @@
   overflow: hidden;
 }
 
-/* ── Status bar (mobile only) ────────────────────────────── */
-.cwy-statusbar {
-  flex: none;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 22px 0 26px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--np-text);
-  background: var(--np-app-bar-bg);
-}
-
-.cwy-statusbar .icons {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.cwy-statusbar svg { display: block; }
-
-@container cwy (min-width: 840px) { .cwy-statusbar { display: none; } }
-
 /* ── App bar ─────────────────────────────────────────────── */
 .cwy-appbar {
   flex: none;

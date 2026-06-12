@@ -10,25 +10,6 @@
   font-family: var(--np-font);
 }
 
-/* ===== Status bar (mobile only) ===== */
-.pw-statusbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 42px;
-  padding: 0 18px 0 22px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--np-text);
-  flex-shrink: 0;
-}
-
-.pw-sb-icons {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
 /* ===== App bar ===== */
 .pw-appbar {
   display: flex;
@@ -87,7 +68,6 @@
 
 /* ===== Desktop overrides ===== */
 @container (min-width: 840px) {
-  .pw-statusbar,
   .pw-homebar,
   .pw-nav-m { display: none !important; }
 

@@ -24,23 +24,6 @@
   overflow: hidden;
 }
 
-/* ===== Mobile status bar ===== */
-.ar-statusbar {
-  flex: none;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 22px 0 26px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--np-text);
-  background: var(--np-app-bar-bg);
-}
-.ar-sb-icons { display: flex; align-items: center; gap: 6px; }
-.ar-sb-icons svg { display: block; }
-@container app (min-width: 840px) { .ar-statusbar { display: none; } }
-
 /* ===== Top bar ===== */
 .ar-topbar {
   flex: none;

@@ -25,24 +25,6 @@
   overflow: hidden;
 }
 
-/* ── Status bar (mobile only) ── */
-.gr-statusbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 42px;
-  padding: 0 22px 0 26px;
-  font-size: 13px;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.gr-sb-icons {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
 /* ── App bar ── */
 .gr-appbar {
   display: flex;
@@ -165,7 +147,6 @@
 
 /* ── Desktop overrides ── */
 @container (min-width: 840px) {
-  .gr-statusbar,
   .gr-homebar,
   .gr-nav-m { display: none !important; }
 

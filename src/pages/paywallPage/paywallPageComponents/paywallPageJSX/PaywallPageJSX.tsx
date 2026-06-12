@@ -142,29 +142,6 @@ const PaywallPageJSX: React.FC<PaywallPageJSXProps> = ({
   return (
     <div className="pw-shell">
 
-      {/* Mobile status bar */}
-      <div className="pw-statusbar">
-        <span>9:41</span>
-        <span className="pw-sb-icons">
-          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor">
-            <rect x="0" y="7" width="3" height="4" rx="1" />
-            <rect x="4.5" y="5" width="3" height="6" rx="1" />
-            <rect x="9" y="2.5" width="3" height="8.5" rx="1" />
-            <rect x="13.5" y="0" width="3" height="11" rx="1" />
-          </svg>
-          <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
-            <path d="M8 2.6c2.1 0 4 .82 5.43 2.16l1.2-1.3A9.4 9.4 0 0 0 8 .9 9.4 9.4 0 0 0 1.37 3.46l1.2 1.3A7.86 7.86 0 0 1 8 2.6Z" fill="currentColor" />
-            <path d="M8 6.1c1.16 0 2.21.46 2.98 1.2l1.2-1.3A6.06 6.06 0 0 0 8 4.35c-1.6 0-3.05.62-4.13 1.65l1.2 1.3A4.27 4.27 0 0 1 8 6.1Z" fill="currentColor" />
-            <path d="M8 9.6 9.9 7.5A2.7 2.7 0 0 0 8 6.7a2.7 2.7 0 0 0-1.9.8L8 9.6Z" fill="currentColor" />
-          </svg>
-          <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
-            <rect x="1" y="1" width="20" height="10" rx="2.6" stroke="currentColor" strokeOpacity=".5" strokeWidth="1" />
-            <rect x="2.6" y="2.6" width="15" height="6.8" rx="1.4" fill="currentColor" />
-            <rect x="22.4" y="4" width="1.6" height="4" rx=".8" fill="currentColor" fillOpacity=".5" />
-          </svg>
-        </span>
-      </div>
-
       {/* App bar */}
       <header className="pw-appbar">
         {/* Mobile: back button */}

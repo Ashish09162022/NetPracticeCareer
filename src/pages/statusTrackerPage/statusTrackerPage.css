@@ -10,23 +10,6 @@
   container-name: app;
 }
 
-/* ===== Mobile status bar ===== */
-.st-statusbar {
-  flex: none;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 22px 0 26px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--np-text);
-  background: var(--np-app-bar-bg);
-}
-.st-sb-icons { display: flex; align-items: center; gap: 6px; }
-.st-sb-icons svg { display: block; }
-@container app (min-width: 840px) { .st-statusbar { display: none; } }
-
 /* ===== App bar ===== */
 .st-appbar {
   flex: none;

@@ -13,23 +13,6 @@
   overflow: hidden;
 }
 
-/* ===== Status bar ===== */
-.gbp-statusbar {
-  flex: none;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 22px 0 26px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--np-text);
-  background: var(--np-app-bar-bg);
-}
-.gbp-sb-icons { display: flex; align-items: center; gap: 6px; }
-.gbp-sb-icons svg { display: block; }
-@container app (min-width: 840px) { .gbp-statusbar { display: none; } }
-
 /* ===== Progress header ===== */
 .gbp-phead {
   flex: none;
