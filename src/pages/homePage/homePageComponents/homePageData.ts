@@ -37,7 +37,7 @@ export const STUDENT_CONFIGS: Record<StudentStateKey, StudentConfig> = {
 export const FUNNEL: Record<StudentStateKey, ActionFunnelData> = {
   [StudentStateKey.new]: {
     eyebrow: 'Do this next',
-    body: "You're available to start. Now pass the assessment by building a real project from a client brief — that puts you in the pool.",
+    body: "You're available to start. Now pass the assessment by building a real project from a client brief -- that puts you in the pool.",
     ctaLabel: 'Take your assessment',
     ctaPath: PathFor.assessmentIntroPage,
   },

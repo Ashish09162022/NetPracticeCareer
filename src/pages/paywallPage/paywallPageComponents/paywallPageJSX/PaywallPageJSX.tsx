@@ -95,17 +95,17 @@ const VALUE_ITEMS = [
   {
     icon: <ChatValueIcon />,
     title: 'Practice with simulated clients',
-    desc: 'Rehearse requirement-gathering until it’s second nature.',
+    desc: "Rehearse requirement-gathering until it's second nature.",
   },
   {
     icon: <ClipboardValueIcon />,
-    title: 'A fresh assessment when you’re ready',
-    desc: 'Pass it and you’re in the placement pool.',
+    title: "A fresh assessment when you're ready",
+    desc: "Pass it and you're in the placement pool.",
   },
   {
     icon: <RefreshValueIcon />,
     title: 'Re-attempts included',
-    desc: 'No extra cost. Keep going until you’re ready.',
+    desc: "No extra cost. Keep going until you're ready.",
   },
 ];
 
@@ -224,7 +224,7 @@ const PaywallPageJSX: React.FC<PaywallPageJSXProps> = ({
                 <div className="pw-etxt">
                   <div className="pw-etitle">50% scholarship earned</div>
                   <div className="pw-edesc">
-                    Your readiness score of {score} unlocked this price — earned by your assessment, not a limited-time offer.
+                    Your readiness score of {score} unlocked this price -- earned by your assessment, not a limited-time offer.
                   </div>
                 </div>
               </div>

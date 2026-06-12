@@ -167,7 +167,7 @@ const StatusTrackerPageJSX: React.FC<StatusTrackerPageJSXProps> = () => {
           {/* Stepper */}
           <div className="st-stepper">
 
-            {/* Step 1: Done — In the placement pool */}
+            {/* Step 1: Done -- In the placement pool */}
             <div className="st-snode st-done">
               <div className="st-rail">
                 <span className="st-mk"><CheckIcon /></span>
@@ -180,7 +180,7 @@ const StatusTrackerPageJSX: React.FC<StatusTrackerPageJSXProps> = () => {
               </div>
             </div>
 
-            {/* Step 2: Done — Matched with a company */}
+            {/* Step 2: Done -- Matched with a company */}
             <div className="st-snode st-done">
               <div className="st-rail">
                 <span className="st-mk"><CheckIcon /></span>
@@ -193,7 +193,7 @@ const StatusTrackerPageJSX: React.FC<StatusTrackerPageJSXProps> = () => {
               </div>
             </div>
 
-            {/* Step 3: Active — Interview scheduled */}
+            {/* Step 3: Active -- Interview scheduled */}
             <div className="st-snode st-active">
               <div className="st-rail">
                 <span className="st-mk"><CalendarIcon /></span>
@@ -210,7 +210,7 @@ const StatusTrackerPageJSX: React.FC<StatusTrackerPageJSXProps> = () => {
               </div>
             </div>
 
-            {/* Step 4: Upcoming — Placement confirmed */}
+            {/* Step 4: Upcoming -- Placement confirmed */}
             <div className="st-snode st-upcoming">
               <div className="st-rail">
                 <span className="st-mk"><DotCircleIcon /></span>
@@ -225,7 +225,7 @@ const StatusTrackerPageJSX: React.FC<StatusTrackerPageJSXProps> = () => {
 
           </div>
 
-          {/* Desktop contextual card — full width below horizontal stepper */}
+          {/* Desktop contextual card -- full width below horizontal stepper */}
           <div className="st-deskcard st-scard-inner">
             <InterviewCardContent />
           </div>

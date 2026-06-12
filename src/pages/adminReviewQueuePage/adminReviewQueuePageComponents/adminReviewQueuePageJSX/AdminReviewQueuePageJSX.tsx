@@ -135,8 +135,8 @@ const AvailBanner = ({ avail }: { avail: boolean }) => (
       </div>
       <div className="ar-absub">
         {avail
-          ? 'Student-controlled status. In active matching — okay to move forward.'
-          : <><b>Held out of active matching.</b> The student set themselves unavailable — don't match until they turn it back on.</>
+          ? 'Student-controlled status. In active matching -- okay to move forward.'
+          : <><b>Held out of active matching.</b> The student set themselves unavailable -- don't match until they turn it back on.</>
         }
       </div>
     </div>

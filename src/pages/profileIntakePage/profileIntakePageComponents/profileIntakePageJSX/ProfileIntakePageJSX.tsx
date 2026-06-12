@@ -140,7 +140,7 @@ const DesktopStepper: React.FC<{ step: number; done: boolean }> = ({ step, done 
   );
 };
 
-/* ===== Section 1 — About you ===== */
+/* ===== Section 1 -- About you ===== */
 const SectionAboutYou: React.FC<{
   formData: ProfileIntakeFormData;
   onFieldChange: ProfileIntakePageJSXProps['onFieldChange'];
@@ -220,7 +220,7 @@ const SectionAboutYou: React.FC<{
   </div>
 );
 
-/* ===== Section 2 — Internship preference ===== */
+/* ===== Section 2 -- Internship preference ===== */
 const SectionInternship: React.FC<{
   formData: ProfileIntakeFormData;
   onFieldChange: ProfileIntakePageJSXProps['onFieldChange'];
@@ -308,7 +308,7 @@ const SectionInternship: React.FC<{
   </div>
 );
 
-/* ===== Section 3 — Show your work ===== */
+/* ===== Section 3 -- Show your work ===== */
 const SectionWork: React.FC<{
   formData: ProfileIntakeFormData;
   onFieldChange: ProfileIntakePageJSXProps['onFieldChange'];

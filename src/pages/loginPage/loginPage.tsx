@@ -94,7 +94,7 @@ const LoginPage: FC = () => {
       }, 1400);
     } catch (err: unknown) {
       const code = (err as { data?: { error?: { code?: string } } })?.data?.error?.code;
-      if (code === 'otp_expired') setOtpError('Code expired — request a new one');
+      if (code === 'otp_expired') setOtpError('Code expired -- request a new one');
       else setOtpError('Wrong code, try again');
     }
   }, [phoneNumber, otp, verifyOtp, dispatch, navigate]);

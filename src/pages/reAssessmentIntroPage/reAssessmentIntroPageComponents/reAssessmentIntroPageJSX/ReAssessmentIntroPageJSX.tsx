@@ -52,7 +52,7 @@ const ReAssessmentIntroPageJSX: FC<ReAssessmentIntroPageJSXProps> = ({ onCTAClic
             <div className="rai-htext">
               <div className="rai-badge">Second attempt</div>
               <h1>One more shot.</h1>
-              <p>Your first attempt didn't clear the bar. Here's another chance — same project, same standard. Use what you learned.</p>
+              <p>Your first attempt didn't clear the bar. Here's another chance -- same project, same standard. Use what you learned.</p>
             </div>
 
             <div className="rai-steps">
@@ -136,7 +136,7 @@ const ReAssessmentIntroPageJSX: FC<ReAssessmentIntroPageJSXProps> = ({ onCTAClic
                   </svg>
                 </span>
                 <span className="rai-focus-item-text">
-                  Scope creep is the top reason first builds miss the mark. Build exactly what the client asks — nothing more.
+                  Scope creep is the top reason first builds miss the mark. Build exactly what the client asks -- nothing more.
                 </span>
               </div>
 
@@ -148,7 +148,7 @@ const ReAssessmentIntroPageJSX: FC<ReAssessmentIntroPageJSXProps> = ({ onCTAClic
                   </svg>
                 </span>
                 <span className="rai-focus-item-text">
-                  The deadline is firm. Plan your time before you start coding — late work shows in your result.
+                  The deadline is firm. Plan your time before you start coding -- late work shows in your result.
                 </span>
               </div>
             </div>

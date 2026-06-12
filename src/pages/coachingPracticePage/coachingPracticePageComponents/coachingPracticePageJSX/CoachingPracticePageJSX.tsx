@@ -31,12 +31,12 @@ const COACH_VARIANTS: CoachVariant[] = [
   {
     good: ['Friendly and confident.', 'You reassured the client quickly. That builds trust.'],
     miss: ['You agreed before understanding.', '"Pay later on credit" hides a lot: who gets credit, what limit, how it\'s tracked and repaid. Don\'t commit to building until you\'ve scoped it.'],
-    tip: 'Happy to help! Before I plan it — how does the khata work today? Who\'s allowed credit, is there a limit per customer, and how do they usually clear their balance?',
+    tip: 'Happy to help! Before I plan it -- how does the khata work today? Who\'s allowed credit, is there a limit per customer, and how do they usually clear their balance?',
   },
   {
     good: ['Clear and specific.', 'You asked about one concrete detail instead of a vague "tell me more".'],
     miss: ['You stopped at one question.', "There's more to uncover: payment limits, reminders, and who can mark a balance as paid."],
-    tip: 'What happens if a customer goes over their usual amount — do you want a hard limit, or just a warning to you?',
+    tip: 'What happens if a customer goes over their usual amount -- do you want a hard limit, or just a warning to you?',
   },
   {
     good: ['Great follow-up.', 'You connected your question to something the client already said.'],
@@ -48,14 +48,14 @@ const COACH_VARIANTS: CoachVariant[] = [
 const CLIENT_FOLLOW_UPS = [
   "That makes sense. Anything else you'd need from me?",
   "Okay, noted. What else should I think about?",
-  'Sure — go on.',
+  'Sure -- go on.',
 ];
 
 const SCENARIO_1: ChatMessage[] = [
   { id: 'dc1', type: 'daychip', label: 'Practice scenario' },
   { id: 'c1', type: 'client', text: 'Hi, I own a hardware store and I want an app where my regular customers can order supplies and pay later on credit, like a khata.' },
   { id: 's1', type: 'student', text: 'Okay, I can build that for you.', variantIdx: 0 },
-  { id: 'c2', type: 'client', text: 'Good question! Only my regulars get credit — maybe 30-40 of them. They usually clear it at the end of the month.' },
+  { id: 'c2', type: 'client', text: 'Good question! Only my regulars get credit -- maybe 30-40 of them. They usually clear it at the end of the month.' },
 ];
 
 const SCENARIO_2: ChatMessage[] = [

@@ -24,7 +24,7 @@ const GuidedBuildPathPage: FC = () => {
     try {
       await updateModuleStatus({ module_id: moduleId, status: 'done' }).unwrap();
     } catch {
-      // locked module or error — JSX handles display
+      // locked module or error -- JSX handles display
     }
   }, [updateModuleStatus]);
 
@@ -41,7 +41,7 @@ const GuidedBuildPathPage: FC = () => {
     } catch (err: unknown) {
       const code = (err as { data?: { error?: { code?: string } } })?.data?.error?.code;
       if (code === 'no_unseen_brief') {
-        // Show a message — handled via toast or inline in JSX
+        // Show a message -- handled via toast or inline in JSX
       } else if (code === 'attempt_in_progress') {
         navigate(PathFor.clientConversationPage);
       }

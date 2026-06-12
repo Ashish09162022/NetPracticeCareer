@@ -106,7 +106,7 @@ const CompaniesWantYouPage: FC = () => {
       try {
         await acceptCompany(pendingYesId).unwrap();
       } catch {
-        // already_responded or other — still navigate
+        // already_responded or other -- still navigate
       }
     }
     showToast(`Interview booked with ${company?.name.split(' ')[0] ?? 'them'}`);
@@ -124,7 +124,7 @@ const CompaniesWantYouPage: FC = () => {
     try {
       await passCompany({ id }).unwrap();
     } catch {
-      // already_responded — card is still cleared from view
+      // already_responded -- card is still cleared from view
     }
     setReasonbar({ open: true, title: `Passed on ${company?.name ?? ''}.` });
     if (reasonbarTimerRef.current) clearTimeout(reasonbarTimerRef.current);

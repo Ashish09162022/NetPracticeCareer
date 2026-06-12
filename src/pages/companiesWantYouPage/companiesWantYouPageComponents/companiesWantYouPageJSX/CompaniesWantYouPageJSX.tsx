@@ -84,7 +84,7 @@ const CompaniesWantYouPageJSX: FC<CompaniesWantYouPageJSXProps> = ({
   return (
     <div className="cwy-shell">
 
-      {/* Status bar — mobile only */}
+      {/* Status bar -- mobile only */}
       <div className="cwy-statusbar">
         <span>9:41</span>
         <span className="icons">
@@ -207,7 +207,7 @@ const CompaniesWantYouPageJSX: FC<CompaniesWantYouPageJSXProps> = ({
                 <circle cx="12" cy="12" r="9.5"/>
                 <path d="M12 16v-4M12 8.5v.01"/>
               </svg>
-              <span>These companies reached out to you. Passing is always free — it never affects who sees you next.</span>
+              <span>These companies reached out to you. Passing is always free -- it never affects who sees you next.</span>
             </div>
           )}
 
@@ -223,7 +223,7 @@ const CompaniesWantYouPageJSX: FC<CompaniesWantYouPageJSXProps> = ({
           <span className="cwy-shav" style={{ background: pendingCompany?.av ?? 'var(--np-primary)' }}>
             {pendingCompany ? initials(pendingCompany.name) : ''}
           </span>
-          <h3>Interview with {pendingCompany?.name ?? '—'}</h3>
+          <h3>Interview with {pendingCompany?.name ?? '--'}</h3>
           <p className="cwy-sline">One tap sets this up. Here's everything it does:</p>
           <div className="cwy-fused">
             <div className="cwy-frow">
@@ -251,7 +251,7 @@ const CompaniesWantYouPageJSX: FC<CompaniesWantYouPageJSXProps> = ({
         </div>
       </div>
 
-      {/* Pass reason bar — non-blocking */}
+      {/* Pass reason bar -- non-blocking */}
       <div className={`cwy-reasonbar${reasonbarOpen ? ' show' : ''}`}>
         <div className="cwy-rb-top">
           <span className="cwy-rb-t">{reasonbarTitle}</span>

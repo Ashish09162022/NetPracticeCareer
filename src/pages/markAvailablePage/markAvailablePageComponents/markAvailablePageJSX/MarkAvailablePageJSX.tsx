@@ -121,7 +121,7 @@ const MarkAvailablePageJSX: React.FC<MarkAvailablePageJSXProps> = ({ onConfirm, 
             {/* Expectation note */}
             <p className="ma-expect">
               <span className="ma-ei"><InfoIcon /></span>
-              <span>This is the start, not the finish — your skills get verified next. The assessment is the way in, not a hurdle.</span>
+              <span>This is the start, not the finish -- your skills get verified next. The assessment is the way in, not a hurdle.</span>
             </p>
 
           </div>

@@ -44,8 +44,8 @@ const mapToSubmission = (item: AdminQueueItem, idx: number): Submission => {
       cls: item.score >= 80 ? 'good' : item.score >= 60 ? 'warn' : 'bad',
       reqs: [],
     },
-    gather: { score: '—', cls: 'warn', notes: [] },
-    comm: { score: '—', cls: 'warn', notes: [] },
+    gather: { score: '--', cls: 'warn', notes: [] },
+    comm: { score: '--', cls: 'warn', notes: [] },
   };
 };
 

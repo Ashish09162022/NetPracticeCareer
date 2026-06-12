@@ -4,11 +4,11 @@ import {
   BREAKDOWN_NOT_PASS,
   BREAKDOWN_PASS,
   BREAKDOWN_CAPPED_BY_LATE,
-  ScoreTier,
-  Req,
-  Note,
-  BreakdownData,
-  ReqStatus,
+  type ScoreTier,
+  type Req,
+  type Note,
+  type BreakdownData,
+  type ReqStatus,
 } from '../gapReportPageData';
 
 /* ── Icons ── */
@@ -150,7 +150,7 @@ const ScoreCard = ({ score, tier }: { score: number; tier: ScoreTier }) => {
   let body: string;
   if (isPass) {
     h1 = 'You passed!';
-    body = 'You cleared the placement line — a strong, well-rounded build. You're ready for the pool.';
+    body = "You cleared the placement line -- a strong, well-rounded build. You're ready for the pool.";
   } else if (isLate) {
     h1 = 'Great build. Late delivery.';
     body = `You scored above the bar, but it came in past the deadline. The client moved on. Your path is ${GAP_CONFIG.scholarshipPct}% off. Pass the re-assessment on time and you're in.`;
@@ -159,7 +159,7 @@ const ScoreCard = ({ score, tier }: { score: number; tier: ScoreTier }) => {
     body = `Three fixable gaps stand between you and the pool. None are about talent. You scored ${score}, so your path is ${GAP_CONFIG.scholarshipPct}% off.`;
   } else {
     h1 = 'Not there yet';
-    body = 'A few fixable gaps stand between you and the pool. None are about talent — the path is built to close them.';
+    body = 'A few fixable gaps stand between you and the pool. None are about talent -- the path is built to close them.';
   }
 
   return (
@@ -204,7 +204,7 @@ const ScoreCard = ({ score, tier }: { score: number; tier: ScoreTier }) => {
           <div className="gr-scholar-text">
             <div className="gr-scholar-big">Your path is {GAP_CONFIG.scholarshipPct}% off</div>
             <div className="gr-scholar-sub">
-              You scored {score} — that earns a {GAP_CONFIG.scholarshipPct}% scholarship on the guided path, applied automatically.
+              You scored {score} -- that earns a {GAP_CONFIG.scholarshipPct}% scholarship on the guided path, applied automatically.
             </div>
           </div>
         </div>
@@ -215,24 +215,24 @@ const ScoreCard = ({ score, tier }: { score: number; tier: ScoreTier }) => {
 
 /* ── Biggest gap / strongest work card ── */
 const BigGapCard = ({ tier }: { tier: ScoreTier }) => {
-  const isPass = tier === ‘pass’;
-  const isLate = tier === ‘capped_by_late’;
+  const isPass = tier === 'pass';
+  const isLate = tier === 'capped_by_late';
   const isWin = isPass || isLate;
 
   return (
-    <section className={`gr-card gr-biggap${isWin ? ‘ gr-biggap-win’ : ‘’}`}>
-      <span className={`gr-eyebrow ${isWin ? ‘gr-eyebrow-ok’ : ‘gr-eyebrow-danger’}`}>
-        {isWin ? ‘Your strongest work’ : ‘Your biggest gap’}
+    <section className={`gr-card gr-biggap${isWin ? ' gr-biggap-win' : ''}`}>
+      <span className={`gr-eyebrow ${isWin ? 'gr-eyebrow-ok' : 'gr-eyebrow-danger'}`}>
+        {isWin ? 'Your strongest work' : 'Your biggest gap'}
       </span>
       <div className="gr-bgname">Weekly &amp; monthly subscriptions</div>
       <p className="gr-bgwhy">
         {isWin
-          ? "The client’s main ask, and you nailed it. Recurring plans, pause and resume all work end to end."
-          : "The client’s main ask — and recurring plans are the heart of a tiffin business. You built one-time orders only."}
+          ? "The client's main ask, and you nailed it. Recurring plans, pause and resume all work end to end."
+          : "The client's main ask -- and recurring plans are the heart of a tiffin business. You built one-time orders only."}
       </p>
-      <span className={`gr-bgtag ${isWin ? ‘gr-bgtag-win’ : ‘gr-bgtag-miss’}`}>
+      <span className={`gr-bgtag ${isWin ? 'gr-bgtag-win' : 'gr-bgtag-miss'}`}>
         {isWin ? <CheckIcon size={12} /> : <XIcon size={11} />}
-        <span>{isWin ? ‘Nailed it’ : ‘Missing’}</span>
+        <span>{isWin ? 'Nailed it' : 'Missing'}</span>
       </span>
     </section>
   );
