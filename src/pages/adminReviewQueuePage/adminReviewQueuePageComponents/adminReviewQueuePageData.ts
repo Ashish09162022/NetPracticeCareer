@@ -1,7 +1,7 @@
 export type RecoType = 'pass' | 'border' | 'fail';
 export type DeliveryType = 'ontime' | 'late';
 export type DimScoreClass = 'good' | 'warn' | 'bad';
-export type ReqStatus = 'met' | 'part' | 'miss';
+export type ReqStatus = 'met' | 'part' | 'miss' | 'unverifiable';
 export type NoteType = 'pos' | 'neg' | 'tip';
 
 export interface Requirement {
@@ -32,6 +32,7 @@ export interface NotesDimension {
 
 export interface Submission {
   id: number;
+  grade_id?: string;
   name: string;
   init: string;
   avail: boolean;

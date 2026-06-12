@@ -83,6 +83,11 @@ const ReqMissIcon = () => (
     <path d="M18 6L6 18M6 6l12 12" />
   </svg>
 );
+const ReqUnverifiableIcon = () => (
+  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 9a3 3 0 1 1 3 3v2" /><circle cx="12" cy="17" r=".5" fill="currentColor" />
+  </svg>
+);
 
 const notePosIcon = (
   <svg className="ar-ni" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -141,8 +146,9 @@ const AvailBanner = ({ avail }: { avail: boolean }) => (
 
 /* ===== Req icon ===== */
 const reqIcon = (s: ReqStatus) => {
-  if (s === 'met')  return <ReqMetIcon />;
-  if (s === 'part') return <ReqPartIcon />;
+  if (s === 'met')          return <ReqMetIcon />;
+  if (s === 'part')         return <ReqPartIcon />;
+  if (s === 'unverifiable') return <ReqUnverifiableIcon />;
   return <ReqMissIcon />;
 };
 
@@ -251,9 +257,13 @@ const OV_OPTS: { label: string; cls: 'pass' | 'border' | 'fail'; dotColor: strin
 const _dimCls = (_c: DimScoreClass) => _c; // used only for TS, the prop is typed already
 
 /* ===== Main component ===== */
-export interface AdminReviewQueuePageJSXProps {}
+export interface AdminReviewQueuePageJSXProps {
+  submissions?: Submission[];
+  onConfirmApi?: (gradeId: string, override: { outcome: string; note: string } | null) => void;
+}
 
-const AdminReviewQueuePageJSX: React.FC<AdminReviewQueuePageJSXProps> = () => {
+const AdminReviewQueuePageJSX: React.FC<AdminReviewQueuePageJSXProps> = ({ submissions: submissionsProp, onConfirmApi }) => {
+  const subs = submissionsProp ?? SUBMISSIONS;
   const [selectedId, setSelectedId]         = useState<number>(1);
   const [reviewed, setReviewed]             = useState<Record<number, string>>({});
   const [filter, setFilter]                 = useState<'pending' | 'all'>('pending');
@@ -267,13 +277,13 @@ const AdminReviewQueuePageJSX: React.FC<AdminReviewQueuePageJSXProps> = () => {
   const ovNoteRef  = useRef<HTMLTextAreaElement>(null);
 
   /* computed */
-  const visibleRows = SUBMISSIONS
+  const visibleRows = subs
     .filter(s => filter === 'all' || !reviewed[s.id])
     .filter(s => availFilter === 'all' || (s.avail ? 'available' : 'unavailable') === availFilter)
     .sort((a, b) => (b.avail ? 1 : 0) - (a.avail ? 1 : 0));
 
-  const pendingCount = SUBMISSIONS.filter(s => !reviewed[s.id]).length;
-  const selectedSub  = SUBMISSIONS.find(s => s.id === selectedId) ?? null;
+  const pendingCount = subs.filter(s => !reviewed[s.id]).length;
+  const selectedSub  = subs.find(s => s.id === selectedId) ?? null;
 
   /* toast */
   const showToast = useCallback((msg: string) => {
@@ -293,30 +303,39 @@ const AdminReviewQueuePageJSX: React.FC<AdminReviewQueuePageJSXProps> = () => {
 
   /* advance to next pending */
   const nextPending = useCallback((excludeId: number, newReviewed: Record<number, string>) => {
-    const next = SUBMISSIONS.find(s => !newReviewed[s.id] && s.id !== excludeId);
+    const next = subs.find(s => !newReviewed[s.id] && s.id !== excludeId);
     setSelectedId(next ? next.id : -1);
     setOvPanelOpen(false);
     setMobileDetailOpen(false);
-  }, []);
+  }, [subs]);
 
   /* confirm */
   const confirmSub = useCallback(() => {
     if (!selectedId || selectedId < 0) return;
+    const sub = subs.find(s => s.id === selectedId);
+    if (sub?.grade_id && onConfirmApi) onConfirmApi(sub.grade_id, null);
     const newReviewed = { ...reviewed, [selectedId]: 'confirmed' };
     setReviewed(newReviewed);
     showToast('Confirmed, student notified');
     nextPending(selectedId, newReviewed);
-  }, [selectedId, reviewed, showToast, nextPending]);
+  }, [selectedId, reviewed, showToast, nextPending, subs, onConfirmApi]);
 
   /* override */
   const doOverride = useCallback(() => {
     if (!selectedId || selectedId < 0) return;
+    const sub = subs.find(s => s.id === selectedId);
+    if (sub?.grade_id && onConfirmApi) {
+      onConfirmApi(
+        sub.grade_id,
+        overrideChoice ? { outcome: overrideChoice, note: ovNoteRef.current?.value ?? '' } : null,
+      );
+    }
     const newReviewed = { ...reviewed, [selectedId]: 'override' };
     setReviewed(newReviewed);
     showToast('Override saved' + (overrideChoice ? ' → ' + overrideChoice : ''));
     setOverrideChoice(null);
     nextPending(selectedId, newReviewed);
-  }, [selectedId, reviewed, overrideChoice, showToast, nextPending]);
+  }, [selectedId, reviewed, overrideChoice, showToast, nextPending, subs, onConfirmApi]);
 
   /* keyboard shortcuts */
   useEffect(() => {

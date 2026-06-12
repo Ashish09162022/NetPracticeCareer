@@ -607,9 +607,10 @@
   place-items: center;
   align-self: center;
 }
-.ar-rk.ar-met  { background: var(--ar-success-bg); color: var(--ar-success); }
-.ar-rk.ar-part { background: var(--ar-warning-bg); color: var(--ar-warning); }
-.ar-rk.ar-miss { background: var(--ar-danger);     color: #fff; }
+.ar-rk.ar-met          { background: var(--ar-success-bg); color: var(--ar-success); }
+.ar-rk.ar-part         { background: var(--ar-warning-bg); color: var(--ar-warning); }
+.ar-rk.ar-miss         { background: var(--ar-danger);     color: #fff; }
+.ar-rk.ar-unverifiable { background: #eef0f2;              color: #6b7280; }
 .ar-rn { flex: 1; min-width: 0; font-weight: 600; color: var(--np-text); }
 .ar-rn .ar-why { color: var(--np-text-2); font-weight: 500; }
 .ar-req.ar-missrow .ar-rn b { color: var(--ar-danger-text); }
