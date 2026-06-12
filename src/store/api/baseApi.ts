@@ -4,7 +4,7 @@ import type { RootState } from '../store';
 import { logout } from '../slices/authSlice/authSlice';
 
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: '/api/v1',
+  baseUrl: import.meta.env.VITE_API_BASE_URL || '/api/v1',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
     if (token) headers.set('Authorization', `Bearer ${token}`);
