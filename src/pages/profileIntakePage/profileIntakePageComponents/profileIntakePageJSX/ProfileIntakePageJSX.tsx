@@ -248,7 +248,7 @@ const SectionInternship: React.FC<{
             onChange={e => onFieldChange('duration', e.target.value)}
           >
             <option value="" disabled>Select</option>
-            {DURATIONS.map(d => <option key={d} value={d}>{d}</option>)}
+            {DURATIONS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
           </select>
           <span className="pi-select-arrow">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
