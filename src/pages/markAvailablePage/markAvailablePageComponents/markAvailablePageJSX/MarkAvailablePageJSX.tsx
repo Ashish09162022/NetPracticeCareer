@@ -1,6 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { PathFor } from '@/enums/global';
 
 /* ===== Icons ===== */
 const BackIcon = () => (
@@ -46,18 +44,13 @@ const BrandLogo = () => (
 );
 
 /* ===== Main component ===== */
-export interface MarkAvailablePageJSXProps {}
+export interface MarkAvailablePageJSXProps {
+  onConfirm: () => void;
+  onNotNow: () => void;
+  isSaving?: boolean;
+}
 
-const MarkAvailablePageJSX: React.FC<MarkAvailablePageJSXProps> = () => {
-  const navigate = useNavigate();
-
-  const handleConfirm = () => {
-    navigate(PathFor.assessmentIntroPage);
-  };
-
-  const handleNotNow = () => {
-    navigate(PathFor.homePage);
-  };
+const MarkAvailablePageJSX: React.FC<MarkAvailablePageJSXProps> = ({ onConfirm, onNotNow, isSaving }) => {
 
   return (
     <div className="ma-shell">
@@ -83,7 +76,7 @@ const MarkAvailablePageJSX: React.FC<MarkAvailablePageJSXProps> = () => {
       {/* App bar */}
       <header className="ma-appbar">
         {/* Mobile nav */}
-        <button className="ma-iconbtn ma-nav-m" aria-label="Back" onClick={() => navigate(PathFor.homePage)}>
+        <button className="ma-iconbtn ma-nav-m" aria-label="Back" onClick={onNotNow}>
           <BackIcon />
         </button>
         <span className="ma-title ma-nav-m">Availability</span>
@@ -135,11 +128,11 @@ const MarkAvailablePageJSX: React.FC<MarkAvailablePageJSXProps> = () => {
 
           {/* CTA bar */}
           <div className="ma-ctabar">
-            <button className="ma-cta" onClick={handleConfirm}>
-              Confirm I'm ready
+            <button className="ma-cta" onClick={onConfirm} disabled={isSaving}>
+              {isSaving ? 'Saving…' : "Confirm I'm ready"}
               <ArrowIcon />
             </button>
-            <button className="ma-notnow" onClick={handleNotNow}>Not yet</button>
+            <button className="ma-notnow" onClick={onNotNow}>Not yet</button>
           </div>
         </div>
       </div>

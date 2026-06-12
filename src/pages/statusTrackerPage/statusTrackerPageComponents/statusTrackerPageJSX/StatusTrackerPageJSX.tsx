@@ -92,7 +92,15 @@ const InterviewCardContent = () => (
 );
 
 /* ===== Main component ===== */
-export interface StatusTrackerPageJSXProps {}
+import type { PlacementStage } from '@/store/api/placementApi';
+
+export interface StatusTrackerPageJSXProps {
+  stage?: PlacementStage | null;
+  interviewAt?: string | null;
+  interviewWith?: { id: string; company_name: string; role: string; mode: string; stipend: string; duration: string; area: string } | null;
+  history?: { stage: PlacementStage; at: string }[];
+  isLoading?: boolean;
+}
 
 const StatusTrackerPageJSX: React.FC<StatusTrackerPageJSXProps> = () => {
   const navigate = useNavigate();
