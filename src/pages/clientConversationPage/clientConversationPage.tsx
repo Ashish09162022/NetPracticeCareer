@@ -72,7 +72,7 @@ const ClientConversationPage: FC = () => {
 
   return (
     <ClientConversationPageJSX
-      openingMessage={brief?.openingMessage ?? null}
+      openingMessage={brief?.opening_message ?? null}
       personaName={brief?.persona_name ?? 'Client'}
       personaRole={brief?.persona_role ?? ''}
       turnSeconds={turnSeconds}

@@ -75,6 +75,7 @@ export const assessmentApi = baseApi.injectEndpoints({
 export const {
   useStartAssessmentMutation,
   useGetCurrentAssessmentQuery,
+  useLazyGetCurrentAssessmentQuery,
   useSendMessageMutation,
   useFinishConversationMutation,
   useSubmitBuildMutation,

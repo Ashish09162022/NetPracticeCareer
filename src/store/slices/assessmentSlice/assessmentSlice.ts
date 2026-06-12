@@ -3,7 +3,8 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 export interface AssessmentBrief {
   persona_name: string;
   persona_role: string;
-  openingMessage: string;
+  opening_message: string;
+  deadline_hours?: number;
 }
 
 interface AssessmentState {
