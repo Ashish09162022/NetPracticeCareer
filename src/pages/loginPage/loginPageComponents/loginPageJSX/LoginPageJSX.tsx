@@ -7,6 +7,9 @@ export interface LoginPageJSXProps {
   phoneNumber: string;
   otp: string[];
   resendSeconds: number;
+  otpError?: string;
+  isSending?: boolean;
+  isVerifying?: boolean;
   onPhoneChange: (v: string) => void;
   onSendCode: () => void;
   onOtpChange: (index: number, value: string) => void;
@@ -21,6 +24,9 @@ const LoginPageJSX: FC<LoginPageJSXProps> = ({
   phoneNumber,
   otp,
   resendSeconds,
+  otpError,
+  isSending,
+  isVerifying,
   onPhoneChange,
   onSendCode,
   onOtpChange,
@@ -85,8 +91,8 @@ const LoginPageJSX: FC<LoginPageJSXProps> = ({
                 />
               </div>
 
-              <button className="lp-cta" onClick={onSendCode}>
-                Send code
+              <button className="lp-cta" onClick={onSendCode} disabled={isSending}>
+                {isSending ? 'Sending…' : 'Send code'}
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14M13 6l6 6-6 6" />
                 </svg>
@@ -110,6 +116,8 @@ const LoginPageJSX: FC<LoginPageJSXProps> = ({
                   <button className="lp-editnum" onClick={onChangeNumber}>Change number</button>
                 </p>
               </div>
+
+              {otpError && <p className="lp-otperror">{otpError}</p>}
 
               <div className="lp-otpboxes">
                 {otp.map((digit, i) => (
@@ -138,8 +146,8 @@ const LoginPageJSX: FC<LoginPageJSXProps> = ({
                 ))}
               </div>
 
-              <button className="lp-cta lp-cta--otp" onClick={onVerify}>
-                Verify
+              <button className="lp-cta lp-cta--otp" onClick={onVerify} disabled={isVerifying}>
+                {isVerifying ? 'Verifying…' : 'Verify'}
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 6L9 17l-5-5" />
                 </svg>
