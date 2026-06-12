@@ -541,9 +541,10 @@
   background: var(--np-border-strong);
 }
 
-.gr-seg-met  { background: var(--gr-success) !important; }
-.gr-seg-part { background: var(--gr-warning) !important; }
-.gr-seg-miss { background: var(--gr-danger)  !important; }
+.gr-seg-met          { background: var(--gr-success) !important; }
+.gr-seg-part         { background: var(--gr-warning) !important; }
+.gr-seg-miss         { background: var(--gr-danger)  !important; }
+.gr-seg-unverifiable { background: #b0b8c1 !important; }
 
 /* Legend */
 .gr-seglegend {
@@ -569,9 +570,10 @@
   flex-shrink: 0;
 }
 
-.gr-legdot-met  { background: var(--gr-success); }
-.gr-legdot-part { background: var(--gr-warning); }
-.gr-legdot-miss { background: var(--gr-danger); }
+.gr-legdot-met          { background: var(--gr-success); }
+.gr-legdot-part         { background: var(--gr-warning); }
+.gr-legdot-miss         { background: var(--gr-danger); }
+.gr-legdot-unverifiable { background: #b0b8c1; }
 
 /* Requirements list */
 .gr-reqlist {
@@ -598,9 +600,10 @@
   margin-top: 1px;
 }
 
-.gr-badge-met  { background: var(--gr-success-bg); color: var(--gr-success); }
-.gr-badge-partial { background: var(--gr-warning-bg); color: var(--gr-warning); }
-.gr-badge-miss { background: var(--gr-danger); color: #fff; }
+.gr-badge-met          { background: var(--gr-success-bg); color: var(--gr-success); }
+.gr-badge-partial      { background: var(--gr-warning-bg); color: var(--gr-warning); }
+.gr-badge-miss         { background: var(--gr-danger); color: #fff; }
+.gr-badge-unverifiable { background: #eef0f2; color: #6b7280; }
 
 .gr-req-body { flex: 1; min-width: 0; }
 
@@ -633,9 +636,10 @@
   flex-shrink: 0;
 }
 
-.gr-statuslab-met     { color: var(--gr-success-text); }
-.gr-statuslab-partial { color: var(--gr-warning-text); }
-.gr-statuslab-miss    { color: var(--gr-danger-text); }
+.gr-statuslab-met          { color: var(--gr-success-text); }
+.gr-statuslab-partial      { color: var(--gr-warning-text); }
+.gr-statuslab-miss         { color: var(--gr-danger-text); }
+.gr-statuslab-unverifiable { color: #6b7280; }
 
 /* Section subheading */
 .gr-restsub {

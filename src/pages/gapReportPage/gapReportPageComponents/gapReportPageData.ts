@@ -15,7 +15,7 @@ export function getTier(score: number, scenario?: string | null): ScoreTier {
   return 'low';
 }
 
-export type ReqStatus = 'met' | 'partial' | 'miss';
+export type ReqStatus = 'met' | 'partial' | 'miss' | 'unverifiable';
 export type NoteKind = 'pos' | 'neg' | 'tip';
 
 export interface Req {

@@ -36,6 +36,13 @@ const XIcon = ({ size = 11 }: { size?: number }) => (
   </svg>
 );
 
+const QuestionIcon = ({ size = 11 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 9a3 3 0 1 1 3 3v2" />
+    <circle cx="12" cy="17" r=".5" fill="currentColor" />
+  </svg>
+);
+
 const ChevronDownIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M6 9l6 6 6-6" />
@@ -235,6 +242,7 @@ const BigGapCard = ({ tier }: { tier: ScoreTier }) => {
 const BadgeIcon = ({ status }: { status: ReqStatus }) => {
   if (status === 'met') return <CheckIcon size={13} />;
   if (status === 'partial') return <MinusIcon />;
+  if (status === 'unverifiable') return <QuestionIcon size={11} />;
   return <XIcon size={12} />;
 };
 
@@ -243,11 +251,12 @@ const segClass: Record<ReqStatus, string> = {
   met: 'gr-seg-met',
   partial: 'gr-seg-part',
   miss: 'gr-seg-miss',
+  unverifiable: 'gr-seg-unverifiable',
 };
 
 /* ── Requirement row ── */
 const ReqRow = ({ req }: { req: Req }) => {
-  const statusLabel: Record<ReqStatus, string> = { met: 'Met', partial: 'Partial', miss: 'Missing' };
+  const statusLabel: Record<ReqStatus, string> = { met: 'Met', partial: 'Partial', miss: 'Missing', unverifiable: "Couldn't verify" };
   return (
     <div className="gr-req">
       <span className={`gr-badge gr-badge-${req.status}`}>
@@ -294,10 +303,12 @@ const BreakdownSection = ({ tier }: { tier: ScoreTier }) => {
     met: data.segments.filter(s => s === 'met').length,
     partial: data.segments.filter(s => s === 'partial').length,
     miss: data.segments.filter(s => s === 'miss').length,
+    unverifiable: data.segments.filter(s => s === 'unverifiable').length,
   };
   const summaryParts = [`${counts.met} met`];
   if (counts.partial > 0) summaryParts.push(`${counts.partial} partial`);
   if (counts.miss > 0) summaryParts.push(`${counts.miss} missing`);
+  if (counts.unverifiable > 0) summaryParts.push(`${counts.unverifiable} unverified`);
 
   return (
     <details className="gr-card gr-rest">
@@ -321,6 +332,7 @@ const BreakdownSection = ({ tier }: { tier: ScoreTier }) => {
             <span><b className="gr-legdot gr-legdot-met" />{counts.met} Met</span>
             {counts.partial > 0 && <span><b className="gr-legdot gr-legdot-part" />{counts.partial} Partial</span>}
             {counts.miss > 0 && <span><b className="gr-legdot gr-legdot-miss" />{counts.miss} Missing</span>}
+            {counts.unverifiable > 0 && <span><b className="gr-legdot gr-legdot-unverifiable" />{counts.unverifiable} Couldn't verify</span>}
           </div>
         </div>
 
