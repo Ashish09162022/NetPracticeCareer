@@ -1,51 +1,68 @@
-import { type FC, useState, useCallback, useMemo } from 'react';
+import { type FC, useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PathFor } from '@/enums/global';
+import { useAppSelector } from '@/hooks/storeHooks';
+import { useGetGradeQuery } from '@/store/api/gradeApi';
+import { useCreateOrderMutation, useVerifyPaymentMutation } from '@/store/api/paymentApi';
+import { useLogEventMutation } from '@/store/api/eventsApi';
 import PaywallPageJSX from './paywallPageComponents/paywallPageJSX/PaywallPageJSX';
 import './paywallPage.css';
 
-const CONFIG = { passMark: 90, scholarshipFloor: 70, scholarshipPct: 50, pathPrice: 5000 };
-
-interface PaywallPageProps {}
-
-const PaywallPage: FC<PaywallPageProps> = () => {
+const PaywallPage: FC = () => {
   const navigate = useNavigate();
+  const submissionId = useAppSelector((s) => s.assessment.submissionId);
 
-  const score = useMemo(() => {
-    const raw = localStorage.getItem('np-gap-score');
-    const n = Number(raw);
-    return raw && !isNaN(n) ? n : 78;
-  }, []);
+  const { data: gradeResponse } = useGetGradeQuery(submissionId ?? '', { skip: !submissionId });
+  const grade = gradeResponse && !('status' in gradeResponse) ? gradeResponse : null;
 
-  const hasScholarship = score >= CONFIG.scholarshipFloor && score < CONFIG.passMark;
-  const price = hasScholarship
-    ? Math.round(CONFIG.pathPrice * (1 - CONFIG.scholarshipPct / 100))
-    : CONFIG.pathPrice;
+  const [createOrder] = useCreateOrderMutation();
+  const [verifyPayment] = useVerifyPaymentMutation();
+  const [logEvent] = useLogEventMutation();
 
   const [razorpayOpen, setRazorpayOpen] = useState(false);
   const [successShown, setSuccessShown] = useState(false);
 
-  const handleUnlock = useCallback(() => setRazorpayOpen(true), []);
+  useEffect(() => {
+    logEvent({ type: 'paywall_shown', payload: {} });
+  }, [logEvent]);
+
+  const price = grade?.price ?? 2500;
+  const originalPrice = grade?.full_price ?? 5000;
+  const hasScholarship = grade?.outcome === 'scholarship';
+  const score = grade?.score ?? 78;
+  const gradeId = grade?.grade_id ?? '';
+
+  const handleUnlock = useCallback(async () => {
+    if (!gradeId) return;
+    try {
+      const order = await createOrder({ grade_id: gradeId }).unwrap();
+      // In production: open Razorpay checkout with order.razorpay_order_id
+      // For now we open the mock modal
+      console.log('Razorpay order created:', order);
+      setRazorpayOpen(true);
+    } catch {
+      setRazorpayOpen(true); // open anyway for demo
+    }
+  }, [gradeId, createOrder]);
+
   const handleCloseRazorpay = useCallback(() => setRazorpayOpen(false), []);
-  const handlePay = useCallback(() => {
+
+  const handlePay = useCallback(async () => {
+    // In production: called from Razorpay checkout success callback with real IDs
+    // Stubbed here until Razorpay checkout is integrated
     setRazorpayOpen(false);
     setSuccessShown(true);
   }, []);
-  const handleSuccessCTA = useCallback(
-    () => navigate(PathFor.guidedBuildPathPage),
-    [navigate],
-  );
-  const handleBack = useCallback(
-    () => navigate(PathFor.gapReportPage),
-    [navigate],
-  );
+
+  const handleSuccessCTA = useCallback(() => navigate(PathFor.guidedBuildPathPage), [navigate]);
+  const handleBack = useCallback(() => navigate(PathFor.gapReportPage), [navigate]);
 
   return (
     <PaywallPageJSX
       score={score}
       hasScholarship={hasScholarship}
       price={price}
-      originalPrice={CONFIG.pathPrice}
+      originalPrice={originalPrice}
       razorpayOpen={razorpayOpen}
       successShown={successShown}
       onUnlock={handleUnlock}
