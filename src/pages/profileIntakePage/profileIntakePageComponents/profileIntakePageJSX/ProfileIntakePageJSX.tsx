@@ -70,6 +70,7 @@ export interface ProfileIntakePageJSXProps {
   done: boolean;
   formData: ProfileIntakeFormData;
   toastVisible: boolean;
+  isSaving?: boolean;
   onContinue: () => void;
   onBack: () => void;
   onSkip: () => void;
@@ -456,7 +457,7 @@ const DoneScreen: React.FC<{ onHome: () => void }> = ({ onHome }) => (
 
 /* ===== Main component ===== */
 const ProfileIntakePageJSX: React.FC<ProfileIntakePageJSXProps> = ({
-  step, done, formData, toastVisible,
+  step, done, formData, toastVisible, isSaving,
   onContinue, onBack, onSkip, onDoneForNow,
   onFieldChange, onProjectLinkChange, onAddProjectLink, onRemoveProjectLink, onResumeChange,
 }) => {
@@ -561,8 +562,8 @@ const ProfileIntakePageJSX: React.FC<ProfileIntakePageJSXProps> = ({
                   {step === 2 && (
                     <button className="pi-ghost-btn" onClick={onSkip}>Skip for now</button>
                   )}
-                  <button className="pi-cta" onClick={onContinue}>
-                    {step === 2 ? 'Save' : 'Continue'} <ChevronRightIcon />
+                  <button className="pi-cta" onClick={onContinue} disabled={isSaving}>
+                    {isSaving ? 'Saving…' : step === 2 ? 'Save' : 'Continue'} <ChevronRightIcon />
                   </button>
                 </div>
               )}
