@@ -13,8 +13,17 @@ type StudentMsg = { id: string; type: 'student'; text: string; variantIdx: numbe
 type TypingMsg  = { id: string; type: 'typing' };
 type ChatMessage = DaychipMsg | ClientMsg | StudentMsg | TypingMsg;
 
+import type { CoachingFeedback } from '@/store/api/coachingApi';
+
 interface CoachingPracticePageJSXProps {
+  attemptId?: string | null;
+  personaName?: string;
+  personaRole?: string;
+  openingMessage?: string;
+  isStarting?: boolean;
   onBack: () => void;
+  onStart?: () => void;
+  onSend?: (text: string) => Promise<{ reply: string; coaching_feedback: CoachingFeedback | null }>;
 }
 
 /* ===== Data ===== */

@@ -17,9 +17,14 @@ interface LessonData {
   type: string;
 }
 
+import type { BuildPathData } from '@/store/api/buildPathApi';
+
 export interface GuidedBuildPathPageJSXProps {
+  buildPath?: BuildPathData | null;
+  isLoading?: boolean;
   onBack: () => void;
   onPractice: () => void;
+  onModuleDone?: (moduleId: string) => void;
   onReassessment: () => void;
 }
 
