@@ -265,7 +265,7 @@ const ClientConversationPageJSX: React.FC<ClientConversationPageJSXProps> = ({
 
   const isEnded = endVariant !== null;
   const timerClass = timeLeft <= 10 ? 'danger' : timeLeft <= 30 ? 'warn' : '';
-  const dashOffset = CIRCUMFERENCE * (1 - timeLeft / TOTAL);
+  const dashOffset = CIRCUMFERENCE * (1 - timeLeft / Math.max(1, turnSeconds));
 
   return (
     <div className="cc-shell">

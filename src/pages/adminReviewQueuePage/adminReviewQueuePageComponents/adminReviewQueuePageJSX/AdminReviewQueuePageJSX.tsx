@@ -3,7 +3,6 @@ import {
   SUBMISSIONS,
   type Submission,
   type RecoType,
-  type DimScoreClass,
   type ReqStatus,
   type NoteType,
 } from '../adminReviewQueuePageData';
@@ -253,9 +252,6 @@ const OV_OPTS: { label: string; cls: 'pass' | 'border' | 'fail'; dotColor: strin
   { label: 'Not ready',   cls: 'fail',   dotColor: '#e21a1a' },
 ];
 
-/* ===== Score class helper ===== */
-const _dimCls = (_c: DimScoreClass) => _c; // used only for TS, the prop is typed already
-
 /* ===== Main component ===== */
 export interface AdminReviewQueuePageJSXProps {
   submissions?: Submission[];
@@ -273,7 +269,7 @@ const AdminReviewQueuePageJSX: React.FC<AdminReviewQueuePageJSXProps> = ({ submi
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
   const [toastMsg, setToastMsg]             = useState('');
   const [toastVisible, setToastVisible]     = useState(false);
-  const toastTimer = useRef<ReturnType<typeof setTimeout>>();
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const ovNoteRef  = useRef<HTMLTextAreaElement>(null);
 
   /* computed */

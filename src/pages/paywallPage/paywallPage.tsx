@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { PathFor } from '@/enums/global';
 import { useAppSelector } from '@/hooks/storeHooks';
 import { useGetGradeQuery } from '@/store/api/gradeApi';
-import { useCreateOrderMutation, useVerifyPaymentMutation } from '@/store/api/paymentApi';
+import { useCreateOrderMutation } from '@/store/api/paymentApi';
 import { useLogEventMutation } from '@/store/api/eventsApi';
 import PaywallPageJSX from './paywallPageComponents/paywallPageJSX/PaywallPageJSX';
 import './paywallPage.css';
@@ -16,7 +16,6 @@ const PaywallPage: FC = () => {
   const grade = gradeResponse && !('status' in gradeResponse) ? gradeResponse : null;
 
   const [createOrder] = useCreateOrderMutation();
-  const [verifyPayment] = useVerifyPaymentMutation();
   const [logEvent] = useLogEventMutation();
 
   const [razorpayOpen, setRazorpayOpen] = useState(false);

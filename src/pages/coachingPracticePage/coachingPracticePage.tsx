@@ -42,9 +42,9 @@ const CoachingPracticePage: FC = () => {
   return (
     <CoachingPracticePageJSX
       attemptId={attemptId}
-      personaName={personaName}
-      personaRole={personaRole}
-      openingMessage={openingMessage}
+      personaName={personaName ?? undefined}
+      personaRole={personaRole ?? undefined}
+      openingMessage={openingMessage ?? undefined}
       isStarting={isStarting}
       onBack={handleBack}
       onStart={handleStart}
