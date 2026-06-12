@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NetPractice — Build Submission</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet" />
+<style>
+@font-face { font-family:"Gilroy"; src:url("fonts/Gilroy-Regular.woff2") format("woff2"); font-weight:400; font-display:swap; }
+@font-face { font-family:"Gilroy"; src:url("fonts/Gilroy-Medium.woff2") format("woff2"); font-weight:500; font-display:swap; }
+@font-face { font-family:"Gilroy"; src:url("fonts/Gilroy-Semibold.woff2") format("woff2"); font-weight:600; font-display:swap; }
+@font-face { font-family:"Gilroy"; src:url("fonts/Gilroy-Bold.woff2") format("woff2"); font-weight:700; font-display:swap; }
+@font-face { font-family:"Gilroy"; src:url("fonts/Gilroy-Extrabold.woff2") format("woff2"); font-weight:800; font-display:swap; }
+@font-face { font-family:"Gilroy"; src:url("fonts/Gilroy-Black.woff2") format("woff2"); font-weight:1000; font-display:swap; }
+@font-face { font-family:"Museo Sans Display"; src:url("fonts/MuseoSansDisplay-Black.woff2") format("woff2"); font-weight:900; font-display:swap; }
+@font-face { font-family:"Museo Sans Display"; src:url("fonts/MuseoSansDisplay-ExtraBlack.woff2") format("woff2"); font-weight:1000; font-display:swap; }
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+button { font: inherit; cursor: pointer; }
+input, textarea { font: inherit; }
+
+body { background: #e7ebf1; background-image: radial-gradient(circle at 50% -8%, #f1f4f8, #e3e8ee); min-height: 100vh; font-family: 'Gilroy', system-ui, sans-serif; color: #334155; display: flex; flex-direction: column; align-items: center; padding: 24px 18px 50px; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: center; margin-bottom: 22px; }
+.cgroup { display: flex; align-items: center; gap: 10px; }
+.cgroup .lbl { font-size: 11px; letter-spacing: 1.3px; text-transform: uppercase; color: #94a3b8; font-weight: 700; }
+.seg { display: inline-flex; background: #fff; border: 1px solid #e2e8f0; border-radius: 999px; padding: 4px; box-shadow: 0 1px 2px rgba(16,24,40,.05); }
+.seg button { border: 0; background: transparent; padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 600; color: #64748b; display: flex; align-items: center; gap: 7px; transition: all .18s ease; }
+.seg button .dot { width: 9px; height: 9px; border-radius: 50%; }
+.seg.vw button.active, .seg.st button.active { background: #0f172a; color: #fff; }
+.seg svg { display: block; }
+
+.stage { width: 100%; max-width: 1180px; transition: max-width .3s cubic-bezier(.2,.8,.2,1); }
+body[data-vw="phone"] .stage { max-width: 412px; }
+
+.app { container-type: inline-size; container-name: app; background: var(--bg); border: 1px solid #d7deea; border-radius: 20px; overflow: hidden; height: calc(100vh - 150px); min-height: 560px; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(16,24,40,.06), 0 36px 70px -30px rgba(16,24,40,.4); font-family: var(--font); color: var(--text); }
+
+.statusbar { flex: none; height: 42px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px 0 26px; font-size: 13px; font-weight: 700; color: var(--text); background: var(--app-bar-bg); }
+.statusbar .icons { display: flex; align-items: center; gap: 6px; } .statusbar svg { display: block; }
+@container app (min-width: 840px) { .statusbar { display: none; } }
+
+.appbar { flex: none; min-height: 56px; display: flex; align-items: center; gap: 14px; padding: 0 16px; background: var(--app-bar-bg); border-bottom: 1px solid var(--border); }
+.appbar .iconbtn { width: 38px; height: 38px; border: 0; background: transparent; display: grid; place-items: center; border-radius: 50%; color: var(--text); }
+.appbar .title { font-size: 16px; font-weight: 700; letter-spacing: -.2px; }
+[data-theme="netpractice"] .appbar .title { font-weight: 800; }
+.appbar .spacer { flex: 1; }
+.nav-d { display: none; align-items: center; gap: 12px; flex: 1; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; letter-spacing: -.3px; color: var(--text); }
+.brand .logo { width: 28px; height: 28px; border-radius: 8px; background: var(--primary); display: grid; place-items: center; }
+[data-theme="netpractice"] .brand .logo { background: var(--np-grad-cta), #03274b; border-radius: 9px; }
+.brand .logo span { width: 9px; height: 9px; border-radius: 50%; background: #fff; }
+.nav-d nav { display: flex; gap: 2px; margin-left: 14px; }
+.nav-d nav a { text-decoration: none; font-size: 14px; font-weight: 600; color: var(--text-2); padding: 8px 13px; border-radius: 8px; }
+.nav-d nav a.cur { color: var(--primary); background: var(--primary-soft); }
+[data-theme="netpractice"] .nav-d nav a.cur { background: var(--surface-2); }
+.nav-d .spacer { flex: 1; }
+.nav-d .help { border: 0; background: transparent; color: var(--text-2); font-size: 13.5px; font-weight: 700; padding: 8px; }
+@container app (min-width: 840px) { .appbar { min-height: 64px; padding: 0 28px; } .nav-m { display: none; } .nav-d { display: flex; } }
+
+.scroll { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+.scroll::-webkit-scrollbar { width: 9px; } .scroll::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 5px; }
+.layout { display: flex; flex-direction: column; min-height: 100%; }
+.content { flex: 1 0 auto; width: 100%; max-width: 520px; margin: 0 auto; padding: 22px 18px 30px; }
+@container app (min-width: 840px) { .layout { justify-content: center; } .content { flex: 0 1 auto; padding: 40px 24px; } }
+
+.htext { margin-bottom: 18px; }
+.htext h1 { margin: 0; font-size: 25px; line-height: 1.16; letter-spacing: -.5px; font-weight: 800; color: var(--text); }
+[data-theme="netpractice"] .htext h1 { font-family: var(--font-display); font-weight: 1000; letter-spacing: -.7px; }
+.htext p { margin: 8px 0 0; font-size: 14.5px; line-height: 1.5; color: var(--text-2); font-weight: 500; }
+@container app (min-width: 840px) { .htext h1 { font-size: 28px; } }
+
+/* delivery countdown banner */
+.deadline { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: var(--radius-card); margin-bottom: 20px; border: 1px solid; background: var(--dl-bg); border-color: var(--dl-border); }
+.deadline.on { --dl-bg: var(--success-bg); --dl-border: color-mix(in srgb, var(--success) 26%, transparent); --dl-fg: var(--success-text); --dl-accent: var(--success); }
+.deadline.late { --dl-bg: var(--warning-bg); --dl-border: color-mix(in srgb, var(--warning) 30%, transparent); --dl-fg: var(--warning-text); --dl-accent: var(--warning); }
+.deadline.past { --dl-bg: var(--danger-bg); --dl-border: color-mix(in srgb, var(--danger) 30%, transparent); --dl-fg: var(--danger-text); --dl-accent: var(--danger); }
+.deadline .dlicon { flex: none; width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--surface); color: var(--dl-accent); border: 1px solid var(--dl-border); }
+.deadline .dlmeta { flex: 1; min-width: 0; }
+.deadline .dltop { display: flex; align-items: center; gap: 8px; }
+.deadline .dlstatus { font-size: 11px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; color: var(--dl-fg); }
+.deadline .dlleft { margin: 3px 0 0; font-size: 19px; font-weight: 800; letter-spacing: -.4px; color: var(--text); }
+[data-theme="netpractice"] .deadline .dlleft { font-family: var(--font-display); font-weight: 1000; }
+.deadline .dlleft b { color: var(--dl-fg); }
+.deadline .dlsub { margin: 3px 0 0; font-size: 12.5px; font-weight: 600; color: var(--dl-fg); opacity: .92; }
+
+/* form */
+.field { margin-bottom: 17px; }
+.field > label { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; letter-spacing: -.1px; }
+.field > label .opt { color: var(--text-3); font-weight: 600; margin-left: auto; }
+.field > label svg { color: var(--text-2); }
+.control { position: relative; }
+.input, textarea.input { width: 100%; padding: 14px 14px; border: 1.5px solid var(--border-strong); border-radius: var(--radius-input); font-size: 15px; color: var(--text); background: var(--surface); transition: border-color .15s ease, box-shadow .15s ease; }
+.input.hasicon { padding-left: 42px; }
+.input::placeholder, textarea.input::placeholder { color: var(--text-3); }
+.input:focus, textarea.input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-ring); }
+.leadicon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text-2); display: grid; }
+textarea.input { resize: none; min-height: 84px; line-height: 1.5; }
+.valid { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: var(--success); display: none; }
+.control.ok .valid { display: grid; }
+.control.ok .input { border-color: color-mix(in srgb, var(--success) 50%, var(--border-strong)); }
+.charcount { text-align: right; font-size: 11.5px; color: var(--text-3); font-weight: 600; margin-top: 6px; }
+
+.cta { width: 100%; margin-top: 8px; border: 0; color: var(--on-primary); background: var(--primary); border-radius: var(--radius-btn); padding: 16px 20px; font-size: 16px; font-weight: var(--btn-weight); letter-spacing: -.2px; display: flex; align-items: center; justify-content: center; gap: 9px; box-shadow: var(--cta-shadow); transition: transform .12s ease, background .15s ease, box-shadow .12s ease, opacity .15s ease; }
+
+
+[data-theme="netpractice"] .cta { background: var(--np-grad-cta), #03274b; font-weight: 1000; letter-spacing: -.32px; transition: transform 0s, box-shadow 0s; }
+[data-theme="netpractice"] .cta:active { transform: translateY(4px); box-shadow: none; }
+.cta:disabled { opacity: .5; cursor: default; }
+[data-theme="netpractice"] .cta:disabled { background: var(--disable-bg); box-shadow: none; }
+.reassure { display: flex; align-items: flex-start; gap: 8px; margin: 14px 2px 0; font-size: 12.5px; line-height: 1.45; color: var(--text-3); font-weight: 600; }
+.reassure svg { flex: none; margin-top: 1px; color: var(--success); }
+
+.homebar { flex: none; height: 22px; display: grid; place-items: center; background: var(--app-bar-bg); }
+.homebar i { width: 120px; height: 5px; border-radius: 3px; background: var(--text-3); opacity: .5; }
+@container app (min-width: 840px) { .homebar { display: none; } }
+
+/* submitted state */
+.endstate { position: absolute; inset: 0; background: var(--bg); display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px; z-index: 15; }
+.endstate.show { display: flex; }
+.endstate .big { width: 84px; height: 84px; border-radius: 50%; background: var(--success-bg); color: var(--success); display: grid; place-items: center; margin-bottom: 22px; }
+.endstate h2 { margin: 0; font-size: 25px; font-weight: 800; letter-spacing: -.5px; color: var(--text); }
+[data-theme="netpractice"] .endstate h2 { font-family: var(--font-display); font-weight: 1000; }
+.endstate p { margin: 10px 0 0; font-size: 15px; line-height: 1.55; color: var(--text-2); max-width: 34ch; }
+
+/* themes */
+
+[data-theme="netpractice"] {
+  --font: 'Gilroy', system-ui, sans-serif; --font-display: 'Museo Sans Display', 'Gilroy', sans-serif;
+  --primary: #FF5100; --primary-strong: #E63E00; --primary-soft: #FFF0E9; --primary-ring: rgba(255,81,0,.16); --on-primary: #fff;
+  --bg: #FFFFFF; --surface: #FFFFFF; --surface-2: #F6F6F6; --app-bar-bg: #FFFFFF;
+  --text: #121212; --text-2: rgba(18,18,18,.62); --text-3: rgba(18,18,18,.42);
+  --border: rgba(18,18,18,.09); --border-strong: rgba(18,18,18,.18); --disable-bg: #e4e4e4;
+  --success: #43a85a; --success-bg: #e3f4e7; --success-text: #266034;
+  --warning: #cc861d; --warning-bg: #faeedd; --warning-text: #754d11;
+  --danger:  #ff1a1a; --danger-bg:  #fff0f0; --danger-text:  #cc0000;
+  --np-grad-cta: linear-gradient(#FF5100,#FF5100);
+  --radius-card: 16px; --radius-input: 10px; --radius-btn: 68px;
+  --cta-shadow: 0 4px 0 0 rgba(140,40,0,.85); --btn-weight: 1000;
+}
+
+@media (max-width: 460px) {
+  body { padding: 12px 0 24px; }
+  .stage, body[data-vw="phone"] .stage { max-width: 100%; }
+  .app { border-radius: 0; border-left: 0; border-right: 0; height: calc(100vh - 78px); }
+}
+
+/* NetPractice brand mark */
+.brand .logo,.brand .mark,.mark{background-image:url("assets/np-mark.png")!important;background-color:transparent!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;overflow:hidden!important;}
+.brand .logo>span,.brand .mark>span,.mark>span{display:none!important;}
+</style>
+</head>
+<body data-vw="desktop">
+
+  <div class="controls">
+    <div class="cgroup">
+      <span class="lbl">Deadline</span>
+      <div class="seg st" id="dlSeg">
+        <button data-dl="on">On time</button>
+        <button data-dl="late" class="active">Late</button>
+        <button data-dl="past">Past</button>
+      </div>
+    </div>
+    <div class="cgroup">
+      <span class="lbl">Preview</span>
+      <div class="seg vw" id="vwSeg">
+        <button data-vw="phone"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><line x1="11" y1="18" x2="13" y2="18"/></svg>Phone</button>
+        <button data-vw="desktop" class="active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/></svg>Desktop</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="app" id="app" data-theme="netpractice" data-screen-label="Build Submission">
+
+      <div class="statusbar">
+        <span>9:41</span>
+        <span class="icons">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 2.6c2.1 0 4 .82 5.43 2.16l1.2-1.3A9.4 9.4 0 0 0 8 .9 9.4 9.4 0 0 0 1.37 3.46l1.2 1.3A7.86 7.86 0 0 1 8 2.6Z" fill="currentColor"/><path d="M8 6.1c1.16 0 2.21.46 2.98 1.2l1.2-1.3A6.06 6.06 0 0 0 8 4.35c-1.6 0-3.05.62-4.13 1.65l1.2 1.3A4.27 4.27 0 0 1 8 6.1Z" fill="currentColor"/><path d="M8 9.6 9.9 7.5A2.7 2.7 0 0 0 8 6.7a2.7 2.7 0 0 0-1.9.8L8 9.6Z" fill="currentColor"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.6" stroke="currentColor" stroke-opacity=".5" stroke-width="1"/><rect x="2.6" y="2.6" width="15" height="6.8" rx="1.4" fill="currentColor"/><rect x="22.4" y="4" width="1.6" height="4" rx=".8" fill="currentColor" fill-opacity=".5"/></svg>
+        </span>
+      </div>
+
+      <header class="appbar">
+        <button class="iconbtn nav-m" aria-label="Back"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <span class="title nav-m">Submit your build</span>
+        <span class="spacer nav-m"></span>
+        <button class="iconbtn nav-m" aria-label="Help"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.6 9.2a2.4 2.4 0 0 1 4.7.7c0 1.6-2.4 2.4-2.4 2.4"/><line x1="12" y1="16.6" x2="12" y2="16.7"/></svg></button>
+        <div class="nav-d">
+          <div class="brand"><span class="logo"><span></span></span>NetPractice</div>
+          <nav><a href="#">Dashboard</a><a href="#" class="cur">Assessment</a><a href="#">Placements</a></nav>
+          <span class="spacer"></span>
+          <button class="help">Need help?</button>
+        </div>
+      </header>
+
+      <div class="scroll">
+        <div class="layout">
+          <div class="content">
+
+            <div class="htext">
+              <h1>Submit your build</h1>
+              <p>Send your work for Dr. Mehta's clinic. Check both links open before you submit.</p>
+            </div>
+
+            <!-- delivery countdown -->
+            <div class="deadline late" id="deadline">
+              <span class="dlicon" id="dlIcon"></span>
+              <div class="dlmeta">
+                <div class="dltop"><span class="dlstatus" id="dlStatus">Late, still accepted</span></div>
+                <div class="dlleft" id="dlLeft">In grace period · <b>3h 40m</b> left</div>
+                <div class="dlsub" id="dlSub">Client asked for 48 hours. Submitting now is noted, still graded.</div>
+              </div>
+            </div>
+
+            <!-- form -->
+            <div class="field">
+              <label for="repo"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-.88-.01-1.73-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.55-1.14-4.55-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05a9.36 9.36 0 0 1 5 0c1.91-1.32 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.79-4.57 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.82 0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z"/></svg>Repository link</label>
+              <div class="control" id="repoCtl">
+                <span class="leadicon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
+                <input id="repo" class="input hasicon" type="url" placeholder="github.com/your-username/project" />
+                <span class="valid"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="live"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19"/><path d="M12 2.5a14 14 0 0 1 0 19 14 14 0 0 1 0-19Z"/></svg>Deployed link</label>
+              <div class="control" id="liveCtl">
+                <span class="leadicon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
+                <input id="live" class="input hasicon" type="url" placeholder="your-project.vercel.app" />
+                <span class="valid"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="notes">Notes to the client <span class="opt">Optional</span></label>
+              <div class="control">
+                <textarea id="notes" class="input" maxlength="300" placeholder="Anything Dr. Mehta should know: test login, a feature you're proud of, a known limitation."></textarea>
+              </div>
+              <div class="charcount"><span id="cc">0</span>/300</div>
+            </div>
+
+            <button class="cta" id="submitBtn" disabled>Submit build
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+            <p class="reassure">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+              You'll get clear feedback on what you nailed and what to fix.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="homebar"><i></i></div>
+
+      <!-- submitted -->
+      <div class="endstate" id="endstate">
+        <span class="big"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+        <h2>Build submitted</h2>
+        <p>We're checking your work against Dr. Mehta's requirements. Your report is ready shortly.</p>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  (function () {
+    var app = document.getElementById('app');
+    var themeSeg = document.getElementById('themeSeg'), vwSeg = document.getElementById('vwSeg'), dlSeg = document.getElementById('dlSeg');
+    var TKEY = 'np-gap-theme', VKEY = 'np-vw';
+    function applyTheme(t) { app.setAttribute('data-theme', t); themeSeg && themeSeg.querySelectorAll('button').forEach(function (b) { b.classList.toggle('active', b.dataset.for === t); }); try { localStorage.setItem(TKEY, t); } catch (e) {} }
+    function applyVw(v) { document.body.setAttribute('data-vw', v); vwSeg.querySelectorAll('button').forEach(function (b) { b.classList.toggle('active', b.dataset.vw === v); }); try { localStorage.setItem(VKEY, v); } catch (e) {} }
+    themeSeg && themeSeg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) applyTheme(b.dataset.for); });
+    vwSeg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) applyVw(b.dataset.vw); });
+    var st = 'netpractice', sv = 'desktop';
+    try { st = localStorage.getItem(TKEY) || 'netpractice'; sv = localStorage.getItem(VKEY) || 'desktop'; } catch (e) {}
+    applyTheme("netpractice"); applyVw(sv);
+
+    /* deadline states */
+    var deadline = document.getElementById('deadline'), dlIcon = document.getElementById('dlIcon');
+    var dlStatus = document.getElementById('dlStatus'), dlLeft = document.getElementById('dlLeft'), dlSub = document.getElementById('dlSub');
+    var clockSvg = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+    var warnSvg = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.7 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13.5"/><line x1="12" y1="17" x2="12" y2="17.01"/></svg>';
+    var states = {
+      on:   { cls: 'on',   icon: clockSvg, status: 'On time', left: '<b>12h 20m</b> left', sub: "Client asked for 48 hours. You're well ahead." },
+      late: { cls: 'late', icon: warnSvg,  status: 'Late, still accepted', left: 'In grace period · <b>3h 40m</b> left', sub: 'Client asked for 48 hours. Submitting now is noted, still graded.' },
+      past: { cls: 'past', icon: warnSvg,  status: 'Past deadline', left: '<b>6h 12m</b> past the deadline', sub: "Client asked for 48 hours. You can still submit. Lateness affects your result." }
+    };
+    function applyDl(k) {
+      var s = states[k]; if (!s) return;
+      deadline.className = 'deadline ' + s.cls;
+      dlIcon.innerHTML = s.icon; dlStatus.textContent = s.status; dlLeft.innerHTML = s.left; dlSub.textContent = s.sub;
+      dlSeg.querySelectorAll('button').forEach(function (b) { b.classList.toggle('active', b.dataset.dl === k); });
+    }
+    dlSeg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) applyDl(b.dataset.dl); });
+    applyDl('late');
+
+    /* form validation */
+    var repo = document.getElementById('repo'), live = document.getElementById('live'), notes = document.getElementById('notes');
+    var repoCtl = document.getElementById('repoCtl'), liveCtl = document.getElementById('liveCtl');
+    var submitBtn = document.getElementById('submitBtn'), cc = document.getElementById('cc');
+    function looksUrl(v) { return /[a-z0-9-]+\.[a-z]{2,}/i.test(v.trim()); }
+    function check() {
+      var ro = looksUrl(repo.value), lo = looksUrl(live.value);
+      repoCtl.classList.toggle('ok', ro); liveCtl.classList.toggle('ok', lo);
+      submitBtn.disabled = !(ro && lo);
+    }
+    repo.addEventListener('input', check); live.addEventListener('input', check);
+    notes.addEventListener('input', function () { cc.textContent = this.value.length; });
+
+    submitBtn.addEventListener('click', function () { if (!submitBtn.disabled) document.getElementById('endstate').classList.add('show'); });
+  })();
+</script>
+<template id="__bundler_thumbnail" data-bg-color="#0d1626">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0d1626"/>
+    <g transform="translate(516,316)">
+      <rect width="168" height="168" rx="40" fill="#FF5100"/>
+      <circle cx="58" cy="58" r="20" fill="#fff"/>
+      <circle cx="110" cy="58" r="20" fill="#fff" opacity="0.5"/>
+      <circle cx="58" cy="110" r="20" fill="#fff" opacity="0.5"/>
+      <circle cx="110" cy="110" r="20" fill="#fff"/>
+    </g>
+  </svg>
+</template>
+</body>
+</html>

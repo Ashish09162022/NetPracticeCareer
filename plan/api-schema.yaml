@@ -1,0 +1,1102 @@
+openapi: 3.0.3
+info:
+  title: NetPracticeCareer API
+  version: 1.0.0
+  description: Backend API for the NetPracticeCareer student app.
+paths:
+  /api/v1/admin/company-interest:
+    post:
+      operationId: v1_admin_company_interest_create
+      description: POST /admin/company-interest — manual matching (spec §6.6).
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyInterest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CompanyInterest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CompanyInterest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/admin/grade/{grade_id}/confirm:
+    post:
+      operationId: v1_admin_grade_confirm_create
+      description: POST /admin/grade/{id}/confirm — confirm as-is or override outcome.
+      parameters:
+      - in: path
+        name: grade_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Confirm'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Confirm'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Confirm'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/admin/review-queue:
+    get:
+      operationId: v1_admin_review_queue_retrieve
+      description: |-
+        GET /admin/review-queue[?status=pending|all] — grades for human review,
+        each with the full detail panel the admin screen renders (requirement
+        breakdown, dimension notes, summary).
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/assessment/{attempt_id}/finish:
+    post:
+      operationId: v1_assessment_finish_create
+      description: |-
+        POST /assessment/{attempt_id}/finish — end the SME conversation and start
+        the build clock. Returns the build deadlines (target / grace / hard).
+        Idempotent while building; 409 once the attempt is past the build phase.
+      parameters:
+      - in: path
+        name: attempt_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/assessment/{attempt_id}/message:
+    post:
+      operationId: v1_assessment_message_create
+      description: POST /assessment/{id}/message — one graded conversation turn (AI).
+      parameters:
+      - in: path
+        name: attempt_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Message'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Message'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/assessment/{attempt_id}/submit:
+    post:
+      operationId: v1_assessment_submit_create
+      description: |-
+        POST /assessment/{attempt_id}/submit — submit the built project
+        (`repo_url`, `deploy_url`, optional `notes`) and queue async grading.
+
+        Returns 202 with the `submission_id` to poll via GET /grade/{submission_id}.
+        Late submissions are accepted (they grade in the refused zone); only an
+        attempt already replaced by a newer /assessment/start is rejected (409).
+      parameters:
+      - in: path
+        name: attempt_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Submit'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Submit'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Submit'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/assessment/current:
+    get:
+      operationId: v1_assessment_current_retrieve
+      description: GET /assessment/current — resume support for the build phase (spec
+        §2.4).
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/assessment/start:
+    post:
+      operationId: v1_assessment_start_create
+      description: |-
+        POST /assessment/start — start a graded attempt: assigns a brief and opens
+        the SME conversation.
+
+        Starting a fresh attempt expires any unfinished previous one. The response
+        carries the brief, the new `attempt_id`, and the per-turn timer
+        (`turn_seconds`) for the conversation UI.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartAttempt'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StartAttempt'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StartAttempt'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/auth/otp/request:
+    post:
+      operationId: v1_auth_otp_request_create
+      description: |-
+        POST /auth/otp/request — send a login OTP by SMS to the given phone number.
+
+        Unauthenticated; rate-limited per phone and per client IP. Always responds
+        `{"sent": true}` on success.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OtpRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OtpRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/auth/otp/verify:
+    post:
+      operationId: v1_auth_otp_verify_create
+      description: |-
+        POST /auth/otp/verify — exchange phone + OTP for a bearer token.
+
+        Creates the student on first login (`is_new: true`). The returned JWT goes
+        in the `Authorization: Bearer <token>` header for all authenticated calls.
+        `profile_gate_complete` tells the frontend whether to route to onboarding.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpVerify'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OtpVerify'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OtpVerify'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/availability:
+    put:
+      operationId: v1_availability_update
+      description: PUT /availability — toggle whether the student is open to placement
+        offers.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Availability'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Availability'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Availability'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/buildpath:
+    get:
+      operationId: v1_buildpath_retrieve
+      description: GET /buildpath — seeded modules + this student's progress (paid
+        path).
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/buildpath/{module_id}:
+    put:
+      operationId: v1_buildpath_update
+      description: PUT /buildpath/{module_id} — update one module's status.
+      parameters:
+      - in: path
+        name: module_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModuleStatus'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ModuleStatus'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ModuleStatus'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/coaching/{attempt_id}/message:
+    post:
+      operationId: v1_coaching_message_create
+      description: |-
+        POST /coaching/{attempt_id}/message — one practice-conversation turn.
+
+        Paid path only. Replies as the SME persona and additionally returns
+        `coaching_feedback` (`{good, miss, tip}`) on the student's message.
+      parameters:
+      - in: path
+        name: attempt_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoachingMessage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CoachingMessage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CoachingMessage'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/coaching/start:
+    post:
+      operationId: v1_coaching_start_create
+      description: POST /coaching/start — practice attempt, paid path only (spec §2.7).
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/companies:
+    get:
+      operationId: v1_companies_retrieve
+      description: GET /companies — feeds Companies Want You + Map View (same data).
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/companies/{interest_id}/accept:
+    post:
+      operationId: v1_companies_accept_create
+      description: |-
+        POST /companies/{interest_id}/accept — accept a company's interest.
+
+        Books the interview and moves the placement stage forward; the response
+        carries the new interest `state` and the scheduled `interview_at`.
+      parameters:
+      - in: path
+        name: interest_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/companies/{interest_id}/pass:
+    post:
+      operationId: v1_companies_pass_create
+      description: POST /companies/{interest_id}/pass — decline a company's interest,
+        with an optional `reason`.
+      parameters:
+      - in: path
+        name: interest_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pass'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Pass'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Pass'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/events:
+    post:
+      operationId: v1_events_create
+      description: |-
+        POST /events — accepts ONLY the whitelisted frontend-visible event types
+        (spec §5), so the events table can't be polluted.
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/grade/{submission_id}:
+    get:
+      operationId: v1_grade_retrieve
+      description: GET /grade/{submission_id} — poll until the full grade object arrives.
+      parameters:
+      - in: path
+        name: submission_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/home:
+    get:
+      operationId: v1_home_retrieve
+      description: 'GET /home — derived home-screen state: which card to show and
+        the data to fill it.'
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/payment/order:
+    post:
+      operationId: v1_payment_order_create
+      description: |-
+        POST /payment/order — create a Razorpay order to unlock the paid path for
+        a grade. Returns `razorpay_order_id`, `amount` (paise), and `currency`
+        for the Razorpay checkout widget.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Order'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Order'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/payment/verify:
+    post:
+      operationId: v1_payment_verify_create
+      description: |-
+        POST /payment/verify — verify the Razorpay checkout callback signature and
+        unlock the paid path. The webhook confirms payment independently, so a
+        missed callback still unlocks once the webhook lands.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Verify'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Verify'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Verify'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/payment/webhook:
+    post:
+      operationId: v1_payment_webhook_create
+      description: |-
+        POST /payment/webhook — Razorpay server-to-server webhook (not for frontend use).
+
+        Unauthenticated but verified against the webhook signature header
+        (spec §2.6); processes payment events idempotently.
+      tags:
+      - v1
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/profile:
+    get:
+      operationId: v1_profile_retrieve
+      description: 'GET /profile — the caller''s full profile: all three sections
+        plus completion flags.'
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/profile/resume:
+    post:
+      operationId: v1_profile_resume_create
+      description: |-
+        POST /profile/resume — upload the student's resume (multipart form, field name `file`).
+
+        Max 10 MB. Returns the public `resume_url` to store via PUT /profile/section3.
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/profile/section1:
+    put:
+      operationId: v1_profile_section1_update
+      description: PUT /profile/section1 — save profile section 1 (basic details)
+        and mark it complete.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Section1'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Section1'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Section1'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/profile/section2:
+    put:
+      operationId: v1_profile_section2_update
+      description: |-
+        PUT /profile/section2 — save profile section 2 (education / experience).
+
+        Completing this section finishes the profile gate: the response carries the
+        updated `gate_complete` and `is_available` flags the frontend should refresh.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Section2'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Section2'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Section2'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/profile/section3:
+    put:
+      operationId: v1_profile_section3_update
+      description: PUT /profile/section3 — save profile section 3 (placement preferences);
+        required before pool entry.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Section3'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Section3'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Section3'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/status:
+    get:
+      operationId: v1_status_retrieve
+      description: GET /status — placement stage for the Status Tracker (spec §2.8).
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+components:
+  schemas:
+    Availability:
+      type: object
+      properties:
+        is_available:
+          type: boolean
+      required:
+      - is_available
+    CoachingMessage:
+      type: object
+      properties:
+        text:
+          type: string
+          maxLength: 4000
+      required:
+      - text
+    CompanyInterest:
+      type: object
+      properties:
+        student_id:
+          type: string
+          format: uuid
+        company_name:
+          type: string
+          maxLength: 200
+        role:
+          type: string
+          maxLength: 200
+        mode:
+          $ref: '#/components/schemas/ModeEnum'
+        stipend:
+          type: string
+          default: ''
+          maxLength: 100
+        duration:
+          type: string
+          default: ''
+          maxLength: 100
+        description:
+          type: string
+          default: ''
+          maxLength: 300
+        pitch:
+          type: string
+          default: ''
+          maxLength: 300
+        area:
+          type: string
+          default: ''
+          maxLength: 120
+        lat:
+          type: number
+          format: double
+          nullable: true
+        lng:
+          type: number
+          format: double
+          nullable: true
+      required:
+      - company_name
+      - mode
+      - role
+      - student_id
+    Confirm:
+      type: object
+      properties:
+        override:
+          allOf:
+          - $ref: '#/components/schemas/Override'
+          nullable: true
+    DurationEnum:
+      enum:
+      - 45d
+      - 2mo
+      - 3mo
+      - 4mo
+      - 5mo
+      - 6mo
+      type: string
+      description: |-
+        * `45d` - 45d
+        * `2mo` - 2mo
+        * `3mo` - 3mo
+        * `4mo` - 4mo
+        * `5mo` - 5mo
+        * `6mo` - 6mo
+    Message:
+      type: object
+      properties:
+        text:
+          type: string
+          maxLength: 4000
+        response_seconds:
+          type: integer
+          minimum: 0
+          nullable: true
+        paste_attempts:
+          type: integer
+          minimum: 0
+          nullable: true
+      required:
+      - text
+    ModeEnum:
+      enum:
+      - onsite
+      - remote
+      - hybrid
+      type: string
+      description: |-
+        * `onsite` - onsite
+        * `remote` - remote
+        * `hybrid` - hybrid
+    ModuleStatus:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+      required:
+      - status
+    Order:
+      type: object
+      properties:
+        grade_id:
+          type: string
+          format: uuid
+      required:
+      - grade_id
+    OtpRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+          pattern: ^\+?[0-9]{10,15}$
+      required:
+      - phone
+    OtpVerify:
+      type: object
+      properties:
+        phone:
+          type: string
+          pattern: ^\+?[0-9]{10,15}$
+        otp:
+          type: string
+          maxLength: 8
+      required:
+      - otp
+      - phone
+    OutcomeEnum:
+      enum:
+      - ready
+      - scholarship
+      - full_price
+      type: string
+      description: |-
+        * `ready` - ready
+        * `scholarship` - scholarship
+        * `full_price` - full_price
+    Override:
+      type: object
+      properties:
+        outcome:
+          $ref: '#/components/schemas/OutcomeEnum'
+        note:
+          type: string
+          default: ''
+          maxLength: 1000
+      required:
+      - outcome
+    Pass:
+      type: object
+      properties:
+        reason:
+          type: string
+          nullable: true
+          maxLength: 300
+    Section1:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 120
+        email:
+          type: string
+          format: email
+        college:
+          type: string
+          maxLength: 200
+        graduation_year:
+          type: integer
+          maximum: 2040
+          minimum: 2000
+        stream:
+          type: string
+          maxLength: 100
+      required:
+      - college
+      - email
+      - graduation_year
+      - name
+      - stream
+    Section2:
+      type: object
+      properties:
+        start_date:
+          type: string
+          format: date
+        duration:
+          $ref: '#/components/schemas/DurationEnum'
+        current_city:
+          type: string
+          maxLength: 120
+        ready_to_relocate:
+          type: boolean
+      required:
+      - current_city
+      - duration
+      - ready_to_relocate
+      - start_date
+    Section3:
+      type: object
+      properties:
+        resume_url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 500
+        github_url:
+          type: string
+          nullable: true
+          maxLength: 300
+        linkedin_url:
+          type: string
+          nullable: true
+          maxLength: 300
+        project_links:
+          type: array
+          items:
+            type: string
+            format: uri
+            maxLength: 500
+          maxItems: 3
+    StartAttempt:
+      type: object
+      properties:
+        is_reassessment:
+          type: boolean
+          default: false
+    StatusEnum:
+      enum:
+      - not_started
+      - in_progress
+      - done
+      type: string
+      description: |-
+        * `not_started` - not_started
+        * `in_progress` - in_progress
+        * `done` - done
+    Submit:
+      type: object
+      properties:
+        repo_url:
+          type: string
+          format: uri
+          maxLength: 500
+        deploy_url:
+          type: string
+          format: uri
+          maxLength: 500
+        notes:
+          type: string
+          default: ''
+          maxLength: 4000
+      required:
+      - deploy_url
+      - repo_url
+    Verify:
+      type: object
+      properties:
+        razorpay_order_id:
+          type: string
+          maxLength: 100
+        razorpay_payment_id:
+          type: string
+          maxLength: 100
+        razorpay_signature:
+          type: string
+          maxLength: 200
+      required:
+      - razorpay_order_id
+      - razorpay_payment_id
+      - razorpay_signature
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid

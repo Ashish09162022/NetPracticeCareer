@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NetPractice — Gap Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet" />
+<style>
+@font-face { font-family:"Gilroy"; src:url("fonts/Gilroy-Regular.woff2") format("woff2"); font-weight:400; font-display:swap; }
+@font-face { font-family:"Gilroy"; src:url("fonts/Gilroy-Medium.woff2") format("woff2"); font-weight:500; font-display:swap; }
+@font-face { font-family:"Gilroy"; src:url("fonts/Gilroy-Semibold.woff2") format("woff2"); font-weight:600; font-display:swap; }
+@font-face { font-family:"Gilroy"; src:url("fonts/Gilroy-Bold.woff2") format("woff2"); font-weight:700; font-display:swap; }
+@font-face { font-family:"Gilroy"; src:url("fonts/Gilroy-Extrabold.woff2") format("woff2"); font-weight:800; font-display:swap; }
+@font-face { font-family:"Gilroy"; src:url("fonts/Gilroy-Heavy.woff2") format("woff2"); font-weight:900; font-display:swap; }
+@font-face { font-family:"Gilroy"; src:url("fonts/Gilroy-Black.woff2") format("woff2"); font-weight:1000; font-display:swap; }
+@font-face { font-family:"Museo Sans Display"; src:url("fonts/MuseoSansDisplay-Black.woff2") format("woff2"); font-weight:900; font-display:swap; }
+@font-face { font-family:"Museo Sans Display"; src:url("fonts/MuseoSansDisplay-ExtraBlack.woff2") format("woff2"); font-weight:1000; font-display:swap; }
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+button { font: inherit; cursor: pointer; }
+
+body {
+  background: #e7ebf1;
+  background-image: radial-gradient(circle at 50% -8%, #f1f4f8, #e3e8ee);
+  min-height: 100vh;
+  font-family: 'Gilroy', system-ui, sans-serif;
+  color: #334155;
+  display: flex; flex-direction: column; align-items: center; padding: 24px 18px 50px;
+}
+
+/* ---------------- controls ---------------- */
+.controls { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: center; margin-bottom: 22px; }
+.cgroup { display: flex; align-items: center; gap: 10px; }
+.cgroup .lbl { font-size: 11px; letter-spacing: 1.3px; text-transform: uppercase; color: #94a3b8; font-weight: 700; }
+.seg { display: inline-flex; background: #fff; border: 1px solid #e2e8f0; border-radius: 999px; padding: 4px; box-shadow: 0 1px 2px rgba(16,24,40,.05); }
+.seg button { border: 0; background: transparent; padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 600; color: #64748b; display: flex; align-items: center; gap: 7px; transition: all .18s ease; }
+.seg button .dot { width: 9px; height: 9px; border-radius: 50%; }
+.seg.vw button.active, .seg.oc button.active { background: #0f172a; color: #fff; }
+.seg svg { display: block; }
+
+/* ---------------- stage / app shell ---------------- */
+.stage { width: 100%; max-width: 1240px; transition: max-width .3s cubic-bezier(.2,.8,.2,1); }
+body[data-vw="phone"] .stage { max-width: 412px; }
+
+.app {
+  container-type: inline-size;
+  container-name: app;
+  background: var(--bg);
+  border: 1px solid #d7deea;
+  border-radius: 20px;
+  overflow: hidden;
+  height: calc(100vh - 150px);
+  min-height: 560px;
+  display: flex; flex-direction: column;
+  box-shadow: 0 2px 8px rgba(16,24,40,.06), 0 36px 70px -30px rgba(16,24,40,.4);
+  font-family: var(--font); color: var(--text);
+}
+
+/* status bar (phone only) */
+.statusbar { flex: none; height: 42px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px 0 26px; font-size: 13px; font-weight: 700; color: var(--text); background: var(--app-bar-bg); }
+.statusbar .icons { display: flex; align-items: center; gap: 6px; }
+.statusbar svg { display: block; }
+@container app (min-width: 840px) { .statusbar { display: none; } }
+
+/* header */
+.appbar { flex: none; min-height: 56px; display: flex; align-items: center; gap: 14px; padding: 0 16px; background: var(--app-bar-bg); border-bottom: 1px solid var(--border); }
+.appbar .iconbtn { width: 38px; height: 38px; border: 0; background: transparent; display: grid; place-items: center; border-radius: 50%; color: var(--text); }
+.appbar .title { font-size: 16px; font-weight: 700; letter-spacing: -.2px; }
+[data-theme="netpractice"] .appbar .title { font-weight: 800; }
+.appbar .spacer { flex: 1; }
+.nav-d { display: none; align-items: center; gap: 16px; flex: 1; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; letter-spacing: -.3px; color: var(--text); }
+.brand .logo { width: 28px; height: 28px; border-radius: 8px; background: var(--primary); display: grid; place-items: center; }
+[data-theme="netpractice"] .brand .logo { background: var(--np-grad-cta), #03274b; border-radius: 9px; }
+.brand .logo span { width: 9px; height: 9px; border-radius: 50%; background: #fff; }
+.nav-d nav { display: flex; gap: 2px; margin-left: 14px; }
+.nav-d nav a { text-decoration: none; font-size: 14px; font-weight: 600; color: var(--text-2); padding: 8px 13px; border-radius: 8px; }
+.nav-d nav a.cur { color: var(--primary); background: var(--primary-soft); }
+[data-theme="netpractice"] .nav-d nav a.cur { background: var(--surface-2); }
+.nav-d .user { display: flex; align-items: center; gap: 10px; }
+.nav-d .user .name { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.nav-d .user .sub2 { font-size: 11.5px; color: var(--text-3); font-weight: 600; }
+.nav-d .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--primary-soft); color: var(--primary); display: grid; place-items: center; font-weight: 800; font-size: 14px; border: 1.5px solid var(--primary); }
+[data-theme="netpractice"] .nav-d .avatar { background: var(--surface-2); border-color: #148aff; }
+@container app (min-width: 840px) { .appbar { min-height: 64px; padding: 0 28px; } .nav-m { display: none; } .nav-d { display: flex; } }
+
+/* scroll */
+.scroll { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+.scroll::-webkit-scrollbar { width: 9px; } .scroll::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 5px; }
+
+/* layout */
+.layout { padding: 18px 16px 30px; display: flex; flex-direction: column; gap: 14px; }
+@container app (min-width: 840px) { .layout { max-width: 1120px; margin: 0 auto; padding: 28px 32px 56px; gap: 22px; } }
+
+/* ---------------- shared bits ---------------- */
+.eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-3); }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
+.pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; font-size: 12.5px; font-weight: 700; padding: 5px 11px 5px 9px; line-height: 1; }
+.pill .pdot { width: 7px; height: 7px; border-radius: 50%; }
+.pill.good { background: var(--success-bg); color: var(--success-text); } .pill.good .pdot { background: var(--success); }
+.pill.warn { background: var(--warning-bg); color: var(--warning-text); } .pill.warn .pdot { background: var(--warning); }
+.pill.bad  { background: var(--danger-bg);  color: var(--danger-text); }  .pill.bad .pdot { background: var(--danger); }
+
+/* ---------------- hero ---------------- */
+.hero { display: flex; flex-direction: column; gap: 16px; }
+.herotext .htop { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 13px; }
+.herotext h1 { margin: 0; font-size: 25px; line-height: 1.16; letter-spacing: -.5px; font-weight: 800; color: var(--text); }
+[data-theme="netpractice"] .herotext h1 { font-family: var(--font-display); font-weight: 1000; letter-spacing: -.7px; }
+.herotext .sub { margin: 9px 0 0; font-size: 14.5px; line-height: 1.5; color: var(--text-2); max-width: 52ch; }
+.herostat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 18px 18px; }
+.herostat .rhd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.herostat .rhd .rt { font-size: 12.5px; font-weight: 700; color: var(--text-2); }
+.scorewrap { display: flex; align-items: baseline; gap: 7px; }
+.scorewrap .sc { font-size: 38px; font-weight: 800; letter-spacing: -1.2px; color: var(--text); line-height: 1; }
+[data-theme="netpractice"] .scorewrap .sc { font-family: var(--font-display); font-weight: 1000; }
+.scorewrap .of { font-size: 14px; color: var(--text-3); font-weight: 700; }
+.track { position: relative; height: 10px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; margin: 14px 0 0; }
+[data-theme="netpractice"] .track { background: var(--medWhite, #f6f6f6); }
+.track .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 68%; background: var(--warning); border-radius: 999px; transition: width 1s cubic-bezier(.2,.8,.2,1); }
+.track .threshold { position: absolute; top: -5px; bottom: -5px; left: 80%; width: 2px; border-radius: 2px; background: var(--text-3); }
+.track .threshold::after { content: "Ready ≥ 80"; position: absolute; top: auto; bottom: -18px; left: 50%; transform: translateX(-46%); white-space: nowrap; font-size: 10px; font-weight: 700; color: var(--text-3); }
+.rcap { margin: 28px 0 0; font-size: 12.5px; color: var(--text-2); font-weight: 600; line-height: 1.5; }
+.rcap b { color: var(--warning-text); }
+.delivery { display: flex; align-items: flex-start; gap: 9px; margin-top: 14px; padding: 11px 13px; background: var(--warning-bg); border-radius: 10px; font-size: 13px; line-height: 1.4; color: var(--warning-text); font-weight: 600; }
+.delivery svg { flex: none; margin-top: 1px; }
+@container app (min-width: 840px) {
+  .hero { flex-direction: row; align-items: stretch; gap: 26px; }
+  .herotext { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .herotext h1 { font-size: 33px; letter-spacing: -.7px; }
+  .herotext .sub { font-size: 15.5px; }
+  .herostat { width: 340px; flex: none; }
+}
+
+/* ---------------- columns ---------------- */
+.cols { display: flex; flex-direction: column; gap: 14px; }
+.main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.dimrow { display: flex; flex-direction: column; gap: 14px; }
+.rail { display: flex; flex-direction: column; gap: 14px; }
+@container app (min-width: 840px) {
+  .cols { display: grid; grid-template-columns: minmax(0,1fr) 360px; gap: 22px; align-items: start; }
+  .main { gap: 18px; }
+  .dimrow { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .rail { position: sticky; top: 8px; }
+}
+
+/* dimension cards */
+.dcard { padding: 16px 16px 8px; }
+.dcard.tight { padding-bottom: 16px; }
+@container app (min-width: 840px) { .dcard { padding: 22px 24px; } }
+.dhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.dhead .dtitle { font-size: 16.5px; font-weight: 700; letter-spacing: -.2px; color: var(--text); }
+[data-theme="netpractice"] .dhead .dtitle { font-weight: 800; }
+.dhead .dnum { font-size: 12.5px; color: var(--text-3); font-weight: 600; }
+
+.stat { margin: 14px 0 4px; }
+.stat .big { font-size: 20px; font-weight: 800; letter-spacing: -.3px; color: var(--text); }
+[data-theme="netpractice"] .stat .big { font-weight: 1000; }
+.stat .big span { color: var(--text-3); font-weight: 700; }
+.segbar { display: flex; gap: 4px; margin-top: 12px; }
+.segbar i { height: 7px; flex: 1; border-radius: 3px; background: var(--border-strong); }
+.segbar i.s-met { background: var(--success); } .segbar i.s-part { background: var(--warning); } .segbar i.s-miss { background: var(--danger); }
+.seglegend { display: flex; gap: 16px; margin-top: 11px; font-size: 11.5px; color: var(--text-2); font-weight: 600; }
+.seglegend span { display: inline-flex; align-items: center; gap: 5px; }
+.seglegend b { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+
+.reqlist { margin-top: 14px; }
+.req { display: flex; gap: 12px; padding: 13px 0; border-top: 1px solid var(--border); }
+.req:first-child { border-top: 0; }
+.req.miss { background: var(--danger-bg); margin: 0 -16px; padding: 13px 16px; border-top: 1px solid var(--border); }
+@container app (min-width: 840px) { .req.miss { margin: 0 -24px; padding: 13px 24px; } }
+.req.miss + .req { border-top: 0; }
+.badge { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; margin-top: 1px; }
+.badge.met { background: var(--success-bg); color: var(--success); }
+.badge.part { background: var(--warning-bg); color: var(--warning); }
+.badge.miss { background: var(--danger); color: #fff; }
+.req .body { flex: 1; min-width: 0; }
+.req .rtop { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.req .rname { font-size: 14.5px; font-weight: 700; color: var(--text); letter-spacing: -.1px; }
+.req.miss .rname { color: var(--danger-text); }
+.req .rwhy { margin-top: 3px; font-size: 13px; line-height: 1.45; color: var(--text-2); }
+.statuslab { font-size: 11.5px; font-weight: 800; letter-spacing: .3px; text-transform: uppercase; flex: none; }
+.statuslab.met { color: var(--success-text); } .statuslab.part { color: var(--warning-text); } .statuslab.miss { color: var(--danger-text); }
+.notask { display: inline-flex; align-items: center; gap: 6px; margin-top: 9px; padding: 4px 9px 4px 8px; border: 1px dashed var(--border-strong); border-radius: 7px; font-size: 11.5px; font-weight: 700; color: var(--text-2); background: var(--surface); }
+.notask svg { flex: none; }
+
+.notes { margin-top: 14px; display: flex; flex-direction: column; gap: 12px; }
+.note { display: flex; gap: 11px; align-items: flex-start; }
+.note .nicon { flex: none; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; margin-top: 1px; }
+.note.pos .nicon { background: var(--success-bg); color: var(--success); }
+.note.neg .nicon { background: var(--danger-bg); color: var(--danger); }
+.note.tip .nicon { background: var(--warning-bg); color: var(--warning); }
+.note .ntext { font-size: 13.5px; line-height: 1.5; color: var(--text-2); }
+.note .ntext b { color: var(--text); font-weight: 700; }
+
+/* conversion */
+.convo { position: relative; overflow: hidden; padding: 22px 18px; border: 1px solid var(--conv-border); background: var(--conv-bg); }
+@container app (min-width: 840px) { .convo { padding: 24px 22px; } }
+[data-theme="netpractice"] .convo { border-color: transparent; background: radial-gradient(120% 90% at 100% 0%, rgba(255,81,0,.10), transparent 60%), var(--surface-2); }
+.convo .ceyebrow { color: var(--primary); }
+.convo h2 { margin: 8px 0 0; font-size: 21px; font-weight: 800; letter-spacing: -.4px; color: var(--text); }
+[data-theme="netpractice"] .convo h2 { font-family: var(--font-display); font-weight: 1000; }
+.convo .csub { margin: 7px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--text-2); }
+.unlocks { margin: 17px 0 0; display: flex; flex-direction: column; gap: 11px; }
+.unlock { display: flex; gap: 10px; align-items: flex-start; }
+.unlock .uc { flex: none; width: 21px; height: 21px; border-radius: 50%; background: var(--primary); color: var(--on-primary); display: grid; place-items: center; margin-top: 1px; }
+[data-theme="netpractice"] .unlock .uc { background: var(--np-grad-cta), #03274b; }
+.unlock .ut { font-size: 14px; line-height: 1.45; color: var(--text); font-weight: 600; }
+.unlock .ut em { font-style: normal; color: var(--success-text); font-weight: 700; }
+.priceline { display: flex; align-items: baseline; gap: 9px; margin: 18px 0 4px; padding-top: 16px; border-top: 1px solid var(--border); }
+.priceline .amt { font-size: 26px; font-weight: 800; letter-spacing: -.6px; color: var(--text); }
+[data-theme="netpractice"] .priceline .amt { font-weight: 1000; }
+.priceline .per { font-size: 12.5px; color: var(--text-2); font-weight: 600; }
+.cta { width: 100%; margin-top: 16px; border: 0; color: var(--on-primary); background: var(--primary); border-radius: var(--radius-btn); padding: 16px 20px; font-size: 15.5px; font-weight: var(--btn-weight); letter-spacing: -.2px; display: flex; align-items: center; justify-content: center; gap: 9px; box-shadow: var(--cta-shadow); transition: transform .12s ease, background .15s ease, box-shadow .12s ease; }
+
+
+[data-theme="netpractice"] .cta { background: var(--np-grad-cta), #03274b; font-weight: 1000; letter-spacing: -.32px; transition: transform 0s, box-shadow 0s; }
+[data-theme="netpractice"] .cta:active { transform: translateY(4px); box-shadow: none; }
+.reassure { margin: 13px 0 0; text-align: center; font-size: 12px; color: var(--text-3); font-weight: 600; }
+.tertiary { display: block; width: 100%; margin-top: 4px; background: transparent; border: 0; color: var(--text-2); font-size: 13.5px; font-weight: 700; padding: 12px; text-align: center; }
+.tertiary:hover { color: var(--text); }
+
+/* ---------------- pass outcome states ---------------- */
+.view[hidden] { display: none !important; }
+.track .fill.pass { width: 87%; background: var(--success); }
+.delivery.ok { background: var(--success-bg); color: var(--success-text); }
+.rcap .okb { color: var(--success-text); }
+.req.win { background: var(--success-bg); margin: 0 -16px; padding: 13px 16px; border-top: 1px solid var(--border); }
+@container app (min-width: 840px) { .req.win { margin: 0 -24px; padding: 13px 24px; } }
+.req.win + .req { border-top: 0; }
+.req.win .rname { color: var(--success-text); }
+.winflag { display: inline-flex; align-items: center; gap: 6px; margin-top: 9px; padding: 4px 9px 4px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 800; color: var(--success-text); background: var(--surface); border: 1px solid var(--success); }
+.winflag svg { flex: none; }
+
+.convo.pool { background: var(--ok-conv-bg); border-color: var(--ok-conv-border); }
+[data-theme="netpractice"] .convo.pool { background: radial-gradient(120% 90% at 100% 0%, rgba(67,168,90,.12), transparent 60%), var(--surface-2); }
+.convo.pool .ceyebrow { color: var(--success-text); }
+.convo.pool .unlock .uc { background: var(--success); }
+[data-theme="netpractice"] .convo.pool .unlock .uc { background: var(--success); }
+.statusline { display: flex; align-items: center; gap: 9px; margin-top: 17px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12.5px; font-weight: 700; color: var(--text-2); line-height: 1.4; }
+.livedot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--success); position: relative; }
+@media (prefers-reduced-motion: no-preference) { .livedot::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--success); animation: lp 1.8s cubic-bezier(0,0,.2,1) infinite; } }
+@keyframes lp { 0% { transform: scale(.6); opacity: .8; } 100% { transform: scale(2.2); opacity: 0; } }
+
+.pmini { margin-top: 18px; padding: 14px 15px; background: var(--surface-2); border-radius: 12px; }
+[data-theme="netpractice"] .pmini { background: var(--bg); border: 1px solid var(--border); }
+.pmini-top { display: flex; align-items: baseline; justify-content: space-between; }
+.pmini-top .pl { font-size: 11.5px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: var(--text-3); }
+.pmini-top .pmini-pct { font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -.3px; }
+[data-theme="netpractice"] .pmini-top .pmini-pct { font-family: var(--font-display); font-weight: 1000; }
+.pmini-bar { height: 8px; border-radius: 999px; background: var(--border-strong); overflow: hidden; margin: 9px 0; }
+.pmini-bar i { display: block; height: 100%; border-radius: 999px; background: var(--primary); transition: width .6s cubic-bezier(.2,.8,.2,1); }
+[data-theme="netpractice"] .pmini-bar i { background: var(--np-grad-cta), #03274b; }
+.pmini-left { font-size: 12.5px; font-weight: 600; color: var(--text-2); }
+.btn-secondary { display: block; width: 100%; margin-top: 14px; background: transparent; border: 1.5px solid var(--border-strong); color: var(--text); border-radius: var(--radius-btn); padding: 13px 20px; font-size: 14.5px; font-weight: 700; text-align: center; transition: border-color .15s ease; }
+.btn-secondary:hover { border-color: var(--success); }
+
+.homebar { flex: none; height: 22px; display: grid; place-items: center; background: var(--app-bar-bg); }
+.homebar i { width: 120px; height: 5px; border-radius: 3px; background: var(--text-3); opacity: .5; }
+@container app (min-width: 840px) { .homebar { display: none; } }
+
+/* ---------------- themes ---------------- */
+
+[data-theme="netpractice"] {
+  --font: 'Gilroy', system-ui, sans-serif; --font-display: 'Museo Sans Display', 'Gilroy', sans-serif;
+  --primary: #FF5100; --primary-strong: #E63E00; --primary-soft: #FFF0E9; --on-primary: #fff;
+  --bg: #FFFFFF; --surface: #FFFFFF; --surface-2: #F6F6F6; --app-bar-bg: #FFFFFF;
+  --text: #121212; --text-2: rgba(18,18,18,.62); --text-3: rgba(18,18,18,.42);
+  --border: rgba(18,18,18,.09); --border-strong: rgba(18,18,18,.18);
+  --success: #43a85a; --success-bg: #e3f4e7; --success-text: #266034;
+  --warning: #cc861d; --warning-bg: #faeedd; --warning-text: #754d11;
+  --danger:  #ff1a1a; --danger-bg:  #fff0f0; --danger-text:  #cc0000;
+  --np-grad-cta: linear-gradient(#FF5100,#FF5100);
+  --radius-card: 16px; --radius-btn: 68px;
+  --shadow-card: none; --cta-shadow: 0 4px 0 0 rgba(140,40,0,.85); --btn-weight: 1000;
+  --conv-bg: #F6F6F6; --conv-border: transparent;
+  --ok-conv-bg: #F6F6F6; --ok-conv-border: transparent;
+}
+
+@media (max-width: 460px) {
+  body { padding: 12px 0 24px; }
+  .stage, body[data-vw="phone"] .stage { max-width: 100%; }
+  .app { border-radius: 0; border-left: 0; border-right: 0; height: calc(100vh - 78px); }
+}
+
+/* ===== focused gap report ===== */
+.report{width:100%;max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:16px;}
+@container app (min-width:840px){.report{gap:20px;}}
+.scorecard{padding:22px 20px 24px;}
+@container app (min-width:840px){.scorecard{padding:30px 32px 34px;}}
+.scoretop{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-top:14px;}
+.scorenum{display:flex;align-items:baseline;gap:8px;}
+.scorenum .sc{font-size:64px;line-height:.82;font-weight:800;letter-spacing:-2.5px;color:var(--text);}
+[data-theme="netpractice"] .scorenum .sc{font-family:var(--font-display);font-weight:1000;}
+.scorenum .of{font-size:18px;font-weight:700;color:var(--text-3);}
+@container app (min-width:840px){.scorenum .sc{font-size:74px;}}
+.rtrack{position:relative;height:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:999px;margin:26px 0 0;}
+.rtrack .band{position:absolute;top:0;bottom:0;background:rgba(204,134,29,.18);}
+.rtrack .fill{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:var(--warning);transition:width 1s cubic-bezier(.2,.8,.2,1);}
+.rtrack .fill.ok{background:var(--success);}
+.rtrack .tick{position:absolute;top:-5px;bottom:-5px;width:2px;border-radius:2px;background:var(--text-2);}
+.rtrack .tick .tlab{position:absolute;bottom:-19px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.2px;}
+.verdict{margin-top:34px;}
+.verdict h1{margin:0;font-size:26px;line-height:1.12;letter-spacing:-.5px;font-weight:800;color:var(--text);}
+[data-theme="netpractice"] .verdict h1{font-family:var(--font-display);font-weight:1000;letter-spacing:-.7px;}
+.verdict p{margin:10px 0 0;font-size:14.5px;line-height:1.5;color:var(--text-2);max-width:52ch;}
+@container app (min-width:840px){.verdict h1{font-size:30px;}.verdict p{font-size:15.5px;}}
+.scholar{display:flex;gap:13px;align-items:flex-start;margin-top:20px;padding:15px 16px;border-radius:14px;background:var(--warning-bg);border:1px solid rgba(204,134,29,.32);}
+.scholar[hidden]{display:none;}
+.scholar .sicon{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:var(--warning);color:#fff;}
+.scholar .stext .big{font-size:16px;font-weight:800;color:var(--warning-text);letter-spacing:-.2px;}
+[data-theme="netpractice"] .scholar .stext .big{font-weight:1000;}
+.scholar .stext .sub{margin-top:3px;font-size:13px;line-height:1.45;color:var(--warning-text);font-weight:600;opacity:.92;}
+.biggap{padding:18px;border-color:var(--danger);}
+.biggap.win{border-color:var(--success);}
+.biggap .bgeyebrow{color:var(--danger-text);}
+.biggap.win .bgeyebrow{color:var(--success-text);}
+.bgname{margin-top:8px;font-size:18px;font-weight:800;letter-spacing:-.2px;color:var(--text);}
+.bgwhy{margin:7px 0 0;font-size:14px;line-height:1.5;color:var(--text-2);}
+.bgtag{display:inline-flex;align-items:center;gap:6px;margin-top:13px;padding:5px 11px 5px 9px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;}
+.bgtag.miss{background:var(--danger);color:#fff;}
+.bgtag.win{background:var(--success);color:#fff;}
+.bgtag svg{flex:none;}
+details.rest{padding:0;overflow:hidden;}
+details.rest>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:17px 18px;font-size:14.5px;font-weight:700;color:var(--text);}
+details.rest>summary::-webkit-details-marker{display:none;}
+details.rest>summary .schev{flex:none;color:var(--text-3);transition:transform .2s ease;}
+details.rest[open]>summary .schev{transform:rotate(180deg);}
+.restbody{padding:2px 18px 18px;}
+@container app (min-width:840px){details.rest>summary{padding:18px 24px;}.restbody{padding:2px 24px 22px;}}
+.restsub{margin:22px 0 2px;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3);}
+.actioncard{padding:22px 20px;}
+@container app (min-width:840px){.actioncard{padding:24px 24px;}}
+.actioncard .aeye{font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--primary);}
+.actioncard.ok .aeye{color:var(--success-text);}
+.actioncard .ahead{font-size:21px;font-weight:800;letter-spacing:-.4px;color:var(--text);margin:8px 0 0;}
+[data-theme="netpractice"] .actioncard .ahead{font-family:var(--font-display);font-weight:1000;}
+.actioncard .asub{margin:7px 0 0;font-size:13.5px;line-height:1.5;color:var(--text-2);}
+.actioncard .priceline{display:flex;align-items:baseline;flex-wrap:wrap;gap:9px;margin:18px 0 0;padding-top:16px;border-top:1px solid var(--border);}
+.actioncard .priceline .amt{font-size:26px;font-weight:800;letter-spacing:-.6px;color:var(--text);}
+[data-theme="netpractice"] .actioncard .priceline .amt{font-weight:1000;}
+.actioncard .priceline .was{font-size:15px;font-weight:700;color:var(--text-3);text-decoration:line-through;}
+.actioncard .priceline .per{font-size:12.5px;color:var(--text-2);font-weight:600;}
+.actioncard .priceline .savetag{margin-left:auto;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:800;background:var(--warning-bg);color:var(--warning-text);}
+[data-theme="netpractice"] .actioncard.ok .cta{background:var(--success);box-shadow:0 4px 0 0 rgba(20,80,40,.7);}
+
+/* NetPractice brand mark */
+.brand .logo,.brand .mark,.mark{background-image:url("assets/np-mark.png")!important;background-color:transparent!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;overflow:hidden!important;}
+.brand .logo>span,.brand .mark>span,.mark>span{display:none!important;}
+</style>
+</head>
+<body data-vw="desktop">
+
+  <div class="controls">
+    <div class="cgroup">
+      <span class="lbl">Result</span>
+      <div class="seg oc" id="outcomeSeg">
+        <button data-score="low">Scored 58</button>
+        <button data-score="schol" class="active">Scored 78</button>
+        <button data-score="pass">Scored 93</button>
+        <button data-score="late">93 · late</button>
+      </div>
+    </div>
+    <div class="cgroup">
+      <span class="lbl">Preview</span>
+      <div class="seg vw" id="vwSeg">
+        <button data-vw="phone"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><line x1="11" y1="18" x2="13" y2="18"/></svg>Phone</button>
+        <button data-vw="desktop" class="active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/></svg>Desktop</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="app" id="app" data-theme="netpractice" data-screen-label="Gap Report">
+
+      <div class="statusbar">
+        <span>9:41</span>
+        <span class="icons">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 2.6c2.1 0 4 .82 5.43 2.16l1.2-1.3A9.4 9.4 0 0 0 8 .9 9.4 9.4 0 0 0 1.37 3.46l1.2 1.3A7.86 7.86 0 0 1 8 2.6Z" fill="currentColor"/><path d="M8 6.1c1.16 0 2.21.46 2.98 1.2l1.2-1.3A6.06 6.06 0 0 0 8 4.35c-1.6 0-3.05.62-4.13 1.65l1.2 1.3A4.27 4.27 0 0 1 8 6.1Z" fill="currentColor"/><path d="M8 9.6 9.9 7.5A2.7 2.7 0 0 0 8 6.7a2.7 2.7 0 0 0-1.9.8L8 9.6Z" fill="currentColor"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="2.6" stroke="currentColor" stroke-opacity=".5" stroke-width="1"/><rect x="2.6" y="2.6" width="15" height="6.8" rx="1.4" fill="currentColor"/><rect x="22.4" y="4" width="1.6" height="4" rx=".8" fill="currentColor" fill-opacity=".5"/></svg>
+        </span>
+      </div>
+
+      <header class="appbar">
+        <!-- mobile -->
+        <button class="iconbtn nav-m" aria-label="Back"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <span class="title nav-m">Assessment result</span>
+        <span class="spacer nav-m"></span>
+        <span class="availslot nav-m" data-avail-pill></span>
+        <button class="iconbtn nav-m" aria-label="Help"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.6 9.2a2.4 2.4 0 0 1 4.7.7c0 1.6-2.4 2.4-2.4 2.4"/><line x1="12" y1="16.6" x2="12" y2="16.7"/></svg></button>
+        <!-- desktop -->
+        <div class="nav-d">
+          <div class="brand"><span class="logo"><span></span></span>NetPractice</div>
+          <nav><a href="#">Dashboard</a><a href="#">Projects</a><a href="#" class="cur">Assessment</a><a href="#">Placements</a></nav>
+          <span class="spacer"></span>
+          <span class="availslot" data-avail-pill></span>
+          <div class="user"><div style="text-align:right"><div class="name">Aman Verma</div><div class="sub2">Project 01 · Submitted</div></div><div class="avatar">AV</div></div>
+        </div>
+      </header>
+
+      <div class="scroll" id="scroll">
+        <div class="layout">
+
+          <div class="report">
+  <!-- 1 · SCORE + VERDICT -->
+  <section class="card scorecard">
+    <span class="eyebrow">Assessment result · Raipur Tiffin Co.</span>
+    <div class="scoretop">
+      <div class="scorenum"><span class="sc" id="scoreVal">78</span><span class="of">/ 100</span></div>
+      <span class="pill warn" id="verdictPill"><span class="pdot"></span><span id="verdictPillText">Almost there</span></span>
+    </div>
+    <div class="rtrack"><div class="band" id="scholBand"></div><div class="fill" id="scoreFill"></div><div class="tick" id="tickPass"><span class="tlab" id="tickPassLab">Pass 90</span></div></div>
+    <div class="verdict"><h1 id="verdictH1">Almost there</h1><p id="verdictBody"></p></div>
+    <div class="scholar" id="scholarBlock" hidden><span class="sicon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5"/></svg></span><div class="stext"><div class="big" id="scholarBig"></div><div class="sub" id="scholarSub"></div></div></div>
+  </section>
+
+  <!-- 2 · BIGGEST GAP / STRONGEST WORK -->
+  <section class="card biggap" id="biggapCard">
+    <span class="eyebrow bgeyebrow" id="bgEyebrow">Your biggest gap</span>
+    <div class="bgname" id="bgName">Weekly &amp; monthly subscriptions</div>
+    <p class="bgwhy" id="bgWhy"></p>
+    <span class="bgtag miss" id="bgTag"></span>
+  </section>
+
+  <!-- 3 · THE REST (collapsible) -->
+  <details class="card rest" id="restDetails">
+    <summary><span id="restSummary">See the full breakdown</span><span class="schev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></summary>
+    <div class="restbody">
+      <div id="breakNotReady"><div class="stat"><div class="big">5 of 8 <span>requirements met</span></div><div class="segbar"><i class="s-met"></i><i class="s-met"></i><i class="s-met"></i><i class="s-met"></i><i class="s-met"></i><i class="s-part"></i><i class="s-miss"></i><i class="s-miss"></i></div><div class="seglegend"><span><b style="background:var(--success)"></b>5 Met</span><span><b style="background:var(--warning)"></b>1 Partial</span><span><b style="background:var(--danger)"></b>2 Missing</span></div></div><div class="reqlist"><div class="req"><span class="badge met"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><div class="body"><div class="rtop"><span class="rname">Browse the daily menu</span><span class="statuslab met">Met</span></div><div class="rwhy">Loads the owner’s menu and refreshes each day.</div></div></div><div class="req"><span class="badge met"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><div class="body"><div class="rtop"><span class="rname">Place an order for a chosen date</span><span class="statuslab met">Met</span></div><div class="rwhy">Date picker and cart complete the order cleanly.</div></div></div><div class="req"><span class="badge met"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><div class="body"><div class="rtop"><span class="rname">Owner can edit the daily menu</span><span class="statuslab met">Met</span></div><div class="rwhy">Add, edit and remove items all work.</div></div></div><div class="req"><span class="badge met"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><div class="body"><div class="rtop"><span class="rname">Cash-on-delivery payment</span><span class="statuslab met">Met</span></div><div class="rwhy">COD flow confirms and records the order.</div></div></div><div class="req"><span class="badge met"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><div class="body"><div class="rtop"><span class="rname">Order confirmation with order number</span><span class="statuslab met">Met</span></div><div class="rwhy">Clear confirmation screen after checkout.</div></div></div><div class="req"><span class="badge part"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><path d="M5 12h14"/></svg></span><div class="body"><div class="rtop"><span class="rname">Re-order from past orders</span><span class="statuslab part">Partial</span></div><div class="rwhy">Order history shows, but the re-order button isn’t wired up yet.</div></div></div><div class="req"><span class="badge miss"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></span><div class="body"><div class="rtop"><span class="rname">9 PM daily order cutoff</span><span class="statuslab miss">Missing</span></div><div class="rwhy">The kitchen needs orders to close at 9 PM so they can shop and prep.</div></div></div></div><div class="restsub">Requirement gathering</div><div class="notes"><div class="note pos"><span class="nicon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="ntext"><b>You scoped the menu well.</b> Good questions about daily updates and who manages items.</span></div><div class="note neg"><span class="nicon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></span><span class="ntext"><b>You missed the business model.</b> The client leads with subscriptions — that question never came up.</span></div><div class="note neg"><span class="nicon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></span><span class="ntext"><b>You didn’t ask about timing.</b> Order cutoff and delivery areas were left unexplored.</span></div></div><div class="restsub">Communication</div><div class="notes"><div class="note pos"><span class="nicon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="ntext"><b>Clear and professional.</b> You explained your choices in plain language the client followed.</span></div><div class="note pos"><span class="nicon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="ntext"><b>Polite and steady.</b> You kept a respectful tone even when the client changed their mind.</span></div><div class="note tip"><span class="nicon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v.01M12 13.5a2.5 2.5 0 1 0-2.5-3"/></svg></span><span class="ntext"><b>Keep them posted when you go quiet.</b> A couple of replies were slow. A quick “working on it” keeps clients calm.</span></div></div><div class="delivery"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Delivered 6h late. The client accepted it, but it was noted.</span></div></div>
+      <div id="breakPass" hidden><div class="stat"><div class="big">7 of 8 <span>requirements met</span></div><div class="segbar"><i class="s-met"></i><i class="s-met"></i><i class="s-met"></i><i class="s-met"></i><i class="s-met"></i><i class="s-met"></i><i class="s-met"></i><i class="s-part"></i></div><div class="seglegend"><span><b style="background:var(--success)"></b>7 Met</span><span><b style="background:var(--warning)"></b>1 Partial</span><span><b style="background:var(--border-strong)"></b>0 Missing</span></div></div><div class="reqlist"><div class="req"><span class="badge met"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><div class="body"><div class="rtop"><span class="rname">9 PM daily order cutoff</span><span class="statuslab met">Met</span></div><div class="rwhy">Orders close at 9 PM so the kitchen can shop and prep — exactly what they needed.</div></div></div><div class="req"><span class="badge met"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><div class="body"><div class="rtop"><span class="rname">Browse the daily menu & place orders</span><span class="statuslab met">Met</span></div><div class="rwhy">Menu loads, refreshes daily, and the date picker and cart complete cleanly.</div></div></div><div class="req"><span class="badge met"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><div class="body"><div class="rtop"><span class="rname">Owner can edit the daily menu</span><span class="statuslab met">Met</span></div><div class="rwhy">Add, edit and remove items all work for the owner.</div></div></div><div class="req"><span class="badge met"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><div class="body"><div class="rtop"><span class="rname">Cash-on-delivery & order confirmation</span><span class="statuslab met">Met</span></div><div class="rwhy">COD flow confirms, records the order, and shows a clear order number.</div></div></div><div class="req"><span class="badge part"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><path d="M5 12h14"/></svg></span><div class="body"><div class="rtop"><span class="rname">Re-order from past orders</span><span class="statuslab part">Partial</span></div><div class="rwhy">History shows and the button’s wired. Just needs a confirmation step, a small polish.</div></div></div></div><div class="restsub">Requirement gathering</div><div class="notes"><div class="note pos"><span class="nicon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="ntext"><b>You found the business model.</b> You asked how the client makes money and caught that subscriptions are the heart of it.</span></div><div class="note pos"><span class="nicon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="ntext"><b>You nailed the timing.</b> Order cutoff and delivery areas came up early, so nothing was a surprise.</span></div></div><div class="restsub">Communication</div><div class="notes"><div class="note pos"><span class="nicon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="ntext"><b>Clear and professional.</b> You explained your choices in plain language the client followed.</span></div><div class="note pos"><span class="nicon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="ntext"><b>Kept the client posted.</b> Steady updates meant they always knew where things stood.</span></div></div><div class="delivery ok"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Delivered on time. The client accepted it without changes.</span></div></div>
+    </div>
+  </details>
+
+  <!-- 4 · ONE ACTION -->
+  <section class="card actioncard" id="actionCard"></section>
+</div>
+
+        </div>
+      </div>
+
+      <div class="homebar"><i></i></div>
+    </div>
+  </div>
+
+<script>
+  (function () {
+    var app = document.getElementById('app');
+    var vwSeg = document.getElementById('vwSeg');
+    var outcomeSeg = document.getElementById('outcomeSeg');
+    var VKEY = 'np-vw', SKEY = 'np-gap-score';
+
+    /* ===== config: thresholds & reward (change these) ===== */
+    var CONFIG = { passMark: 90, scholarshipFloor: 70, scholarshipPct: 50, pathPrice: 5000 };
+    var SCENARIOS = { low: { score: 58 }, schol: { score: 78 }, pass: { score: 93 }, late: { score: 93 } };
+
+    function tierFor(s){ if (s >= CONFIG.passMark) return 'pass'; if (s >= CONFIG.scholarshipFloor) return 'scholarship'; return 'low'; }
+    function inr(n){ return '\u20b9' + Number(n).toLocaleString('en-IN'); }
+
+    var ARROW = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+    var CKI = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+    var XI = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+
+    var $ = function(id){ return document.getElementById(id); };
+    var scoreVal=$('scoreVal'), scoreFill=$('scoreFill'), scholBand=$('scholBand'), tickPass=$('tickPass'), tickPassLab=$('tickPassLab'),
+        verdictPill=$('verdictPill'), verdictPillText=$('verdictPillText'), verdictH1=$('verdictH1'), verdictBody=$('verdictBody'),
+        scholarBlock=$('scholarBlock'), scholarBig=$('scholarBig'), scholarSub=$('scholarSub'),
+        biggapCard=$('biggapCard'), bgEyebrow=$('bgEyebrow'), bgName=$('bgName'), bgWhy=$('bgWhy'), bgTag=$('bgTag'),
+        breakNotReady=$('breakNotReady'), breakPass=$('breakPass'), restSummary=$('restSummary'), actionCard=$('actionCard');
+
+    tickPass.style.left = CONFIG.passMark + '%';
+    tickPassLab.textContent = 'Pass ' + CONFIG.passMark;
+    scholBand.style.left = CONFIG.scholarshipFloor + '%';
+    scholBand.style.width = (CONFIG.passMark - CONFIG.scholarshipFloor) + '%';
+
+    function applyVw(v){ document.body.setAttribute('data-vw', v); vwSeg.querySelectorAll('button').forEach(function(b){ b.classList.toggle('active', b.dataset.vw===v); }); try{localStorage.setItem(VKEY,v);}catch(e){} }
+
+    function render(score, key){
+      var late = key === 'late';
+      var builtWell = tierFor(score) === 'pass';   // skill above the bar
+      var tier = late ? 'late' : tierFor(score), pass = builtWell, pct = CONFIG.scholarshipPct;
+      scoreVal.textContent = score;
+      scoreFill.style.width = Math.max(4, score) + '%';
+      scoreFill.className = 'fill' + (builtWell ? ' ok' : '');
+      if (late) {
+        verdictPill.className = 'pill warn'; verdictPillText.textContent = 'Delivered late';
+      } else {
+        verdictPill.className = 'pill ' + (pass ? 'good' : 'warn');
+        verdictPillText.textContent = pass ? 'Passed' : (tier==='scholarship' ? 'Almost there' : 'Not there yet');
+      }
+      if (late) {
+        verdictH1.textContent = 'Great build. Late delivery.';
+        verdictBody.textContent = 'You scored above the bar, but it came in past the deadline. The client moved on. Your path is ' + pct + '% off. Pass the re-assessment on time and you\u2019re in.';
+      } else if (pass) {
+        verdictH1.textContent = 'You passed!';
+        verdictBody.textContent = 'You cleared the placement line \u2014 a strong, well-rounded build. You\u2019re ready for the pool.';
+      } else if (tier==='scholarship') {
+        verdictH1.textContent = 'Almost there';
+        verdictBody.textContent = 'Three fixable gaps stand between you and the pool. None are about talent. You scored ' + score + ', so your path is ' + pct + '% off.';
+      } else {
+        verdictH1.textContent = 'Not there yet';
+        verdictBody.textContent = 'A few fixable gaps stand between you and the pool. None are about talent \u2014 the path is built to close them.';
+      }
+      if (tier==='scholarship') {
+        scholarBlock.hidden = false;
+        scholarBig.textContent = 'Your path is ' + pct + '% off';
+        scholarSub.textContent = 'You scored ' + score + ' \u2014 that earns a ' + pct + '% scholarship on the guided path, applied automatically.';
+      } else { scholarBlock.hidden = true; }
+      if (builtWell) {
+        biggapCard.className = 'card biggap win';
+        bgEyebrow.textContent = 'Your strongest work';
+        bgName.textContent = 'Weekly & monthly subscriptions';
+        bgWhy.textContent = 'The client\u2019s main ask, and you nailed it. Recurring plans, pause and resume all work end to end.';
+        bgTag.className = 'bgtag win'; bgTag.innerHTML = CKI + '<span>Nailed it</span>';
+      } else {
+        biggapCard.className = 'card biggap';
+        bgEyebrow.textContent = 'Your biggest gap';
+        bgName.textContent = 'Weekly & monthly subscriptions';
+        bgWhy.textContent = 'The client\u2019s main ask \u2014 and recurring plans are the heart of a tiffin business. You built one-time orders only.';
+        bgTag.className = 'bgtag miss'; bgTag.innerHTML = XI + '<span>Missing</span>';
+      }
+      breakNotReady.hidden = builtWell; breakPass.hidden = !builtWell;
+      restSummary.textContent = builtWell ? 'See the full breakdown \u00b7 7 met, 1 partial' : 'See the full breakdown \u00b7 5 met, 1 partial, 2 missing';
+      renderAction(tier);
+    }
+
+    function renderAction(tier){
+      if (tier==='pass') {
+        actionCard.className = 'card actioncard ok';
+        actionCard.innerHTML =
+          '<span class="aeye">You\u2019re placement-ready</span>' +
+          '<div class="ahead">Join the pool</div>' +
+          '<p class="asub">Local businesses pick from the pool. Join it and we\u2019ll start matching you with companies near you.</p>' +
+          '<button class="cta" onclick="window.location.href=\'Profile Intake.html\'">Join the pool ' + ARROW + '</button>' +
+          '<p class="reassure">We\u2019ll text and email you the moment a company picks you.</p>';
+        return;
+      }
+      if (tier==='late') {
+        var fullL = CONFIG.pathPrice, priceL = Math.round(fullL * (1 - CONFIG.scholarshipPct/100));
+        actionCard.className = 'card actioncard';
+        actionCard.innerHTML =
+          '<span class="aeye">Your next step</span>' +
+          '<div class="ahead">Re-assess on time</div>' +
+          '<p class="asub">You\u2019ve got the skill. The guided path gives you a fresh client and a re-assessment. Deliver on time and you\u2019re in.</p>' +
+          '<div class="priceline"><span class="amt">' + inr(priceL) + '</span><span class="was">' + inr(fullL) + '</span><span class="per">one-time \u00b7 includes the re-assessment</span><span class="savetag">' + CONFIG.scholarshipPct + '% off</span></div>' +
+          '<button class="cta" onclick="window.location.href=\'Guided Build Path.html\'">Start my path ' + ARROW + '</button>' +
+          '<p class="reassure">No subscription. Pay once, keep the path for good.</p>';
+        return;
+      }
+      var full = CONFIG.pathPrice, scholar = tier==='scholarship';
+      var price = scholar ? Math.round(full * (1 - CONFIG.scholarshipPct/100)) : full;
+      var priceHTML = scholar
+        ? '<span class="amt">' + inr(price) + '</span><span class="was">' + inr(full) + '</span><span class="per">one-time \u00b7 includes a free retry</span><span class="savetag">' + CONFIG.scholarshipPct + '% scholarship</span>'
+        : '<span class="amt">' + inr(full) + '</span><span class="per">one-time \u00b7 includes a free retry</span>';
+      actionCard.className = 'card actioncard';
+      actionCard.innerHTML =
+        '<span class="aeye">Your next step</span>' +
+        '<div class="ahead">Close these gaps on the path</div>' +
+        '<p class="asub">A guided path built from your gaps, a mentor checking your work, and a free retry with a fresh client.</p>' +
+        '<div class="priceline">' + priceHTML + '</div>' +
+        '<button class="cta" onclick="window.location.href=\'Guided Build Path.html\'">Start my path ' + ARROW + '</button>' +
+        '<p class="reassure">No subscription. Pay once, keep the path for good.</p>';
+    }
+
+    function applyScore(key){
+      var sc = (SCENARIOS[key] || SCENARIOS.schol).score;
+      render(sc, key);
+      outcomeSeg.querySelectorAll('button').forEach(function(b){ b.classList.toggle('active', b.dataset.score===key); });
+      try{ localStorage.setItem(SKEY, key); }catch(e){}
+    }
+
+    vwSeg.addEventListener('click', function(e){ var b=e.target.closest('button'); if(b) applyVw(b.dataset.vw); });
+    outcomeSeg.addEventListener('click', function(e){ var b=e.target.closest('button'); if(b) applyScore(b.dataset.score); });
+
+    var sv='desktop', sk='schol';
+    try{ sv=localStorage.getItem(VKEY)||'desktop'; sk=localStorage.getItem(SKEY)||'schol'; }catch(e){}
+    app.setAttribute('data-theme','netpractice');
+    applyVw(sv); applyScore(sk);
+  })();
+</script>
+<script src="availability.js"></script>
+<template id="__bundler_thumbnail" data-bg-color="#0d1626">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0d1626"/>
+    <g transform="translate(516,316)">
+      <rect width="168" height="168" rx="40" fill="#FF5100"/>
+      <circle cx="58" cy="58" r="20" fill="#fff"/>
+      <circle cx="110" cy="58" r="20" fill="#fff" opacity="0.5"/>
+      <circle cx="58" cy="110" r="20" fill="#fff" opacity="0.5"/>
+      <circle cx="110" cy="110" r="20" fill="#fff"/>
+    </g>
+  </svg>
+</template>
+</body>
+</html>
