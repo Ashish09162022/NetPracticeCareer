@@ -3,9 +3,10 @@ import { type FC } from 'react';
 export interface ReAssessmentIntroPageJSXProps {
   onCTAClick: () => void;
   onBack: () => void;
+  isLoading?: boolean;
 }
 
-const ReAssessmentIntroPageJSX: FC<ReAssessmentIntroPageJSXProps> = ({ onCTAClick, onBack }) => {
+const ReAssessmentIntroPageJSX: FC<ReAssessmentIntroPageJSXProps> = ({ onCTAClick, onBack, isLoading }) => {
   return (
     <div className="rai-shell">
       <header className="rai-appbar">
@@ -154,8 +155,8 @@ const ReAssessmentIntroPageJSX: FC<ReAssessmentIntroPageJSXProps> = ({ onCTAClic
           </div>
 
           <div className="rai-ctabar">
-            <button className="rai-cta" onClick={onCTAClick}>
-              Talk to the client
+            <button className="rai-cta" onClick={onCTAClick} disabled={isLoading}>
+              {isLoading ? 'Starting…' : 'Talk to the client'}
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14M13 6l6 6-6 6" />
               </svg>

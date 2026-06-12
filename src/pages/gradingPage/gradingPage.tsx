@@ -1,18 +1,27 @@
-import { type FC, useCallback } from 'react';
+import { type FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { PathFor } from '@/enums/global';
+import { useAppSelector } from '@/hooks/storeHooks';
+import { useGetGradeQuery } from '@/store/api/gradeApi';
 import GradingPageJSX from './gradingPageComponents/gradingPageJSX/GradingPageJSX';
 import './gradingPage.css';
 
-interface GradingPageProps {}
-
-const GradingPage: FC<GradingPageProps> = () => {
+const GradingPage: FC = () => {
   const navigate = useNavigate();
+  const submissionId = useAppSelector((s) => s.assessment.submissionId);
 
-  const handleBack = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
+  const { data } = useGetGradeQuery(submissionId ?? '', {
+    skip: !submissionId,
+    pollingInterval: 2500,
+  });
 
-  return <GradingPageJSX onBack={handleBack} />;
+  useEffect(() => {
+    if (data && !('status' in data)) {
+      navigate(PathFor.gapReportPage);
+    }
+  }, [data, navigate]);
+
+  return <GradingPageJSX onBack={() => navigate(-1)} />;
 };
 
 export default GradingPage;

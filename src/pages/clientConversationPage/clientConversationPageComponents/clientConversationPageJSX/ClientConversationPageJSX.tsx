@@ -8,31 +8,18 @@ type TypingMsg  = { id: string; type: 'typing' };
 type ChatMessage = DaychipMsg | ClientMsg | StudentMsg | TypingMsg;
 
 interface ClientConversationPageJSXProps {
+  openingMessage: string | null;
+  personaName: string;
+  personaRole: string;
+  turnSeconds: number;
   onBack: () => void;
+  onSend: (text: string, responseSecs: number, pasteAttempts: number) => Promise<string>;
   onGoToBuild: () => void;
+  onConversationEnded: (buildClockStart: string, deadlineSoft: string, deadlineHard: string) => void;
 }
 
 /* ===== Constants ===== */
-const TOTAL = 90;
 const CIRCUMFERENCE = 2 * Math.PI * 18;
-
-const INITIAL_MESSAGES: ChatMessage[] = [
-  { id: 'dc1', type: 'daychip', label: 'Today' },
-  { id: 'c1', type: 'client', text: 'Hello! I run a dental clinic in Pandri. Right now patients call us to book and my front desk stays overwhelmed all day.' },
-  { id: 'c2', type: 'client', text: "I'd like a simple website where patients can book appointments online themselves.", timestamp: '10:31', cont: true },
-  { id: 's1', type: 'student', text: 'Got it, Dr. Mehta. Should patients be able to pick a specific dentist, or just choose a time slot with whoever is available?', timestamp: '10:32' },
-  { id: 'c3', type: 'client', text: 'Good question. Just a time slot is fine for now — we have two dentists but we manage that between ourselves internally.', timestamp: '10:33' },
-  { id: 's2', type: 'student', text: 'Understood. When a patient books, what details should I collect — name and phone, or anything more?', timestamp: '10:34' },
-  { id: 'c4', type: 'client', text: 'Name, phone number, and the reason for the visit. Many are first-timers, so please keep the form short and simple.' },
-  { id: 'c5', type: 'client', text: "One more thing — I need to see the day's bookings myself, and block off slots when the clinic is closed.", timestamp: '10:36', cont: true },
-];
-
-const SCRIPTED_REPLIES = [
-  'Perfect — for blocking off closed days, would a simple on/off toggle per day work for you?',
-  'Got it. And should patients get an SMS confirmation, or is showing it on screen enough for now?',
-  'Understood. I think I have what I need to start. Thank you, Dr. Mehta!',
-  'Thanks — I\'ll get started right away.',
-];
 
 const formatTime = (secs: number) => {
   const m = Math.floor(secs / 60);
@@ -122,24 +109,40 @@ const BatteryIcon = () => (
 );
 
 /* ===== Main component ===== */
-const ClientConversationPageJSX: React.FC<ClientConversationPageJSXProps> = ({ onBack, onGoToBuild }) => {
-  const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
+const ClientConversationPageJSX: React.FC<ClientConversationPageJSXProps> = ({
+  openingMessage,
+  personaName,
+  personaRole,
+  turnSeconds,
+  onBack,
+  onSend,
+  onGoToBuild,
+  onConversationEnded,
+}) => {
+  const initMessages: ChatMessage[] = [
+    { id: 'dc1', type: 'daychip', label: 'Today' },
+    ...(openingMessage
+      ? [{ id: 'c1', type: 'client' as const, text: openingMessage }]
+      : []),
+  ];
+
+  const [messages, setMessages] = useState<ChatMessage[]>(initMessages);
   const [inputValue, setInputValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(TOTAL);
+  const [timeLeft, setTimeLeft] = useState(turnSeconds);
   const [showModal, setShowModal] = useState(false);
   const [endVariant, setEndVariant] = useState<'done' | 'ended' | null>(null);
   const [noticeFlash, setNoticeFlash] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const replyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const timerEndedRef = useRef(false);
-  const replyIndexRef = useRef(0);
-  const counterRef = useRef(20);
+  const counterRef = useRef(0);
   const noticeFlashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sendStartRef = useRef<number>(Date.now());
 
   const nextId = () => String(++counterRef.current);
 
@@ -156,11 +159,11 @@ const ClientConversationPageJSX: React.FC<ClientConversationPageJSXProps> = ({ o
   const startTimer = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     timerEndedRef.current = false;
-    setTimeLeft(TOTAL);
+    setTimeLeft(turnSeconds);
     intervalRef.current = setInterval(() => {
       setTimeLeft(prev => Math.max(0, prev - 1));
     }, 1000);
-  }, []);
+  }, [turnSeconds]);
 
   useEffect(() => {
     startTimer();
@@ -180,13 +183,14 @@ const ClientConversationPageJSX: React.FC<ClientConversationPageJSXProps> = ({ o
     }
   }, [timeLeft]);
 
-  const doSend = useCallback(() => {
+  const doSend = useCallback(async () => {
     const text = inputValue.trim();
-    if (!text) return;
+    if (!text || isSending) return;
 
     const studentId = `s${nextId()}`;
     const typingId = `t${nextId()}`;
     const clientId = `c${nextId()}`;
+    const responseSecs = Math.round((Date.now() - sendStartRef.current) / 1000);
 
     setInputValue('');
     if (taRef.current) {
@@ -195,30 +199,48 @@ const ClientConversationPageJSX: React.FC<ClientConversationPageJSXProps> = ({ o
 
     setMessages(prev => [...prev, { id: studentId, type: 'student', text }]);
     startTimer();
+    sendStartRef.current = Date.now();
 
     typingTimerRef.current = setTimeout(() => {
       setMessages(prev => [...prev, { id: typingId, type: 'typing' }]);
+    }, 300);
 
-      const replyIdx = replyIndexRef.current;
-      if (replyIdx < SCRIPTED_REPLIES.length) {
-        replyTimerRef.current = setTimeout(() => {
-          const reply = SCRIPTED_REPLIES[replyIdx];
-          replyIndexRef.current++;
-          setMessages(prev =>
-            prev.map(m =>
-              m.id === typingId
-                ? ({ id: clientId, type: 'client', text: reply } as ClientMsg)
-                : m
-            )
+    setIsSending(true);
+    try {
+      const reply = await onSend(text, responseSecs, 0);
+      if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
+      setMessages(prev =>
+        prev.map(m =>
+          m.id === typingId
+            ? ({ id: clientId, type: 'client', text: reply } as ClientMsg)
+            : m
+        ).filter(m => m.id !== typingId || true)
+      );
+      setMessages(prev => {
+        const hasTyping = prev.some(m => m.id === typingId);
+        if (hasTyping) {
+          return prev.map(m =>
+            m.id === typingId ? ({ id: clientId, type: 'client', text: reply } as ClientMsg) : m
           );
-        }, 1500);
-      } else {
-        replyTimerRef.current = setTimeout(() => {
-          setMessages(prev => prev.filter(m => m.id !== typingId));
-        }, 1500);
+        }
+        return [...prev, { id: clientId, type: 'client', text: reply }];
+      });
+    } catch (err: unknown) {
+      if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
+      setMessages(prev => prev.filter(m => m.id !== typingId));
+      const errData = (err as { data?: { error?: { code?: string; build_clock_start?: string; deadline_soft?: string; deadline_hard?: string } } })?.data?.error;
+      if (errData?.code === 'conversation_ended') {
+        timerEndedRef.current = true;
+        if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+        setEndVariant('ended');
+        if (errData.build_clock_start) {
+          onConversationEnded(errData.build_clock_start, errData.deadline_soft ?? '', errData.deadline_hard ?? '');
+        }
       }
-    }, 600);
-  }, [inputValue, startTimer]);
+    } finally {
+      setIsSending(false);
+    }
+  }, [inputValue, isSending, startTimer, onSend, onConversationEnded]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -253,7 +275,8 @@ const ClientConversationPageJSX: React.FC<ClientConversationPageJSXProps> = ({ o
     timerEndedRef.current = true;
     setShowModal(false);
     setEndVariant('done');
-  }, []);
+    onGoToBuild();
+  }, [onGoToBuild]);
 
   const handleKeepChatting = useCallback(() => {
     setShowModal(false);
@@ -262,7 +285,6 @@ const ClientConversationPageJSX: React.FC<ClientConversationPageJSXProps> = ({ o
   useEffect(() => {
     return () => {
       if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
-      if (replyTimerRef.current) clearTimeout(replyTimerRef.current);
       if (noticeFlashTimerRef.current) clearTimeout(noticeFlashTimerRef.current);
     };
   }, []);
@@ -289,10 +311,10 @@ const ClientConversationPageJSX: React.FC<ClientConversationPageJSXProps> = ({ o
           <button className="cc-back" onClick={onBack} aria-label="Back">
             <BackIcon />
           </button>
-          <span className="cc-cavatar">DM</span>
+          <span className="cc-cavatar">{personaName.slice(0, 2).toUpperCase()}</span>
           <div className="cc-cmeta">
-            <div className="cc-cn">Dr. Mehta</div>
-            <div className="cc-cr">Dental Clinic · Pandri, Raipur</div>
+            <div className="cc-cn">{personaName}</div>
+            <div className="cc-cr">{personaRole}</div>
           </div>
 
           {/* Circular timer */}
@@ -351,7 +373,7 @@ const ClientConversationPageJSX: React.FC<ClientConversationPageJSXProps> = ({ o
             if (msg.type === 'client') {
               return (
                 <div key={msg.id} className={`cc-row client${msg.cont ? ' cont' : ''}`}>
-                  <span className="cc-ravatar">DM</span>
+                  <span className="cc-ravatar">{personaName.slice(0, 2).toUpperCase()}</span>
                   <div>
                     <div className="cc-bubble">{msg.text}</div>
                     {msg.timestamp && <div className="cc-tstamp">{msg.timestamp}</div>}
@@ -362,7 +384,7 @@ const ClientConversationPageJSX: React.FC<ClientConversationPageJSXProps> = ({ o
             if (msg.type === 'typing') {
               return (
                 <div key={msg.id} className="cc-row client cc-typing">
-                  <span className="cc-ravatar">DM</span>
+                  <span className="cc-ravatar">{personaName.slice(0, 2).toUpperCase()}</span>
                   <div>
                     <div className="cc-bubble">
                       <i /><i /><i />
@@ -406,7 +428,7 @@ const ClientConversationPageJSX: React.FC<ClientConversationPageJSXProps> = ({ o
             </div>
             <button
               className="cc-send"
-              disabled={!inputValue.trim() || isEnded}
+              disabled={!inputValue.trim() || isEnded || isSending}
               onClick={doSend}
               aria-label="Send"
             >

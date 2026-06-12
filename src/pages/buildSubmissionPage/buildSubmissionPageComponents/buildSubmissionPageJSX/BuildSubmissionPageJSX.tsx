@@ -3,11 +3,14 @@ import { type FC, useState, useCallback } from 'react';
 const URL_RE = /[a-z0-9-]+\.[a-z]{2,}/i;
 
 export interface BuildSubmissionPageJSXProps {
+  deadlineSoft: string | null;
+  deadlineHard: string | null;
+  isSubmitting?: boolean;
   onBack: () => void;
   onSubmit: (repo: string, live: string, notes: string) => void;
 }
 
-const BuildSubmissionPageJSX: FC<BuildSubmissionPageJSXProps> = ({ onBack, onSubmit }) => {
+const BuildSubmissionPageJSX: FC<BuildSubmissionPageJSXProps> = ({ onBack, onSubmit, isSubmitting }) => {
   const [repoVal, setRepoVal] = useState('');
   const [liveVal, setLiveVal] = useState('');
   const [notes, setNotes] = useState('');
@@ -177,10 +180,10 @@ const BuildSubmissionPageJSX: FC<BuildSubmissionPageJSXProps> = ({ onBack, onSub
               {/* Submit */}
               <button
                 className="bsp-submit-btn"
-                disabled={!canSubmit}
+                disabled={!canSubmit || isSubmitting}
                 onClick={handleSubmit}
               >
-                Submit build
+                {isSubmitting ? 'Submitting…' : 'Submit build'}
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
