@@ -14,8 +14,8 @@ export interface StartAssessmentResponse {
 export interface SendMessageRequest {
   attempt_id: string;
   text: string;
-  response_seconds: number;
-  paste_attempts: number;
+  response_seconds: number | null;
+  paste_attempts: number | null;
 }
 
 export interface SendMessageResponse {
